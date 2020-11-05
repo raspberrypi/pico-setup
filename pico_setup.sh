@@ -120,19 +120,33 @@ EXTRA_VSCODE_DEPS="libx11-xcb1 libxcb-dri3-0 libdrm2 libgbm1"
 if [[ "$SKIP_VSCODE" == 1 ]]; then
     echo "Won't include VSCODE"
 else
-    echo "Installing VSCODE"
-    if uname -m | grep -q arm64; then
-        VSCODE_DEB="https://aka.ms/linux-arm64-deb"
+    if [ -f vscode.deb ]; then
+        echo "Skipping vscode as vscode.deb exists"
     else
-        VSCODE_DEB="https://aka.ms/linux-armhf-deb"
+        echo "Installing VSCODE"
+        if uname -m | grep -q arm64; then
+            VSCODE_DEB="https://aka.ms/linux-arm64-deb"
+        else
+            VSCODE_DEB="https://aka.ms/linux-armhf-deb"
+        fi
+
+        wget -O vscode.deb $VSCODE_DEB
+        sudo apt install -y ./vscode.deb
+        sudo apt install -y $EXTRA_VSCODE_DEPS
+
+        # Get extensions
+        code --install-extension marus25.cortex-debug
+        code --install-extension ms-vscode.cmake-tools
+        code --install-extension ms-vscode.cpptools
     fi
-
-    wget -O vscode.deb $VSCODE_DEB
-    sudo apt install -y ./vscode.deb
-    sudo apt install -y $EXTRA_VSCODE_DEPS
-
-    # Get extensions
-    code --install-extension marus25.cortex-debug
-    code --install-extension ms-vscode.cmake-tools
-    code --install-extension ms-vscode.cpptools
 fi
+
+# Enable UART
+if [[ "$SKIP_UART" == 1 ]]; then
+    echo "Skipping uart configuration"
+else
+    echo "Disabling Linux serial console (UART) so we can use it for pico"
+    sudo raspi-config nonint do_serial 0
+    echo "You must run sudo reboot to finish UART setup"
+fi
+
