@@ -18,6 +18,7 @@ SDK_DEPS="cmake gcc-arm-none-eabi gcc g++"
 OPENOCD_DEPS="gdb-multiarch automake autoconf build-essential texinfo libtool libftdi-dev libusb-1.0-0-dev"
 # Wget to download the deb
 VSCODE_DEPS="wget"
+UART_DEPS="minicom"
 
 # Build full list of dependencies
 DEPS="$GIT_DEPS $SDK_DEPS"
@@ -151,6 +152,7 @@ fi
 if [[ "$SKIP_UART" == 1 ]]; then
     echo "Skipping uart configuration"
 else
+    sudo apt install $UART_DEPS
     echo "Disabling Linux serial console (UART) so we can use it for pico"
     sudo raspi-config nonint do_serial 0
     echo "You must run sudo reboot to finish UART setup"
