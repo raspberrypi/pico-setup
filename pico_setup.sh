@@ -3,7 +3,7 @@
 # Exit on error
 set -e
 
-if grep -q BCM2835 /proc/cpuinfo; then
+if grep -q Raspberry /proc/cpuinfo; then
     echo "Running on a Raspberry Pi"
 else
     echo "Not running on a Raspberry Pi. Use at your own risk!"
