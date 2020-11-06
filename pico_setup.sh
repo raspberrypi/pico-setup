@@ -115,6 +115,8 @@ else
     sudo make install
 fi
 
+cd $OUTDIR
+
 # Liam needed to install these to get it working
 EXTRA_VSCODE_DEPS="libx11-xcb1 libxcb-dri3-0 libdrm2 libgbm1"
 if [[ "$SKIP_VSCODE" == 1 ]]; then
