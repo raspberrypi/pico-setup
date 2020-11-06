@@ -61,6 +61,10 @@ else
     cd $PICO_SDK_PATH
     git submodule init
     git submodule update
+
+    # Define PICO_SDK_PATH in ~/.bashrc
+    echo "Adding PICO_SDK_PATH" to ~/.bashrc
+    echo "export PICO_SDK_PATH=$PICO_SDK_PATH" >> ~/.bashrc
 fi
 
 cd $OUTDIR
@@ -151,4 +155,3 @@ else
     sudo raspi-config nonint do_serial 0
     echo "You must run sudo reboot to finish UART setup"
 fi
-
