@@ -145,6 +145,9 @@ else
         code --install-extension marus25.cortex-debug
         code --install-extension ms-vscode.cmake-tools
         code --install-extension ms-vscode.cpptools
+
+	# Hack to make cortex-debug work
+	sudo ln -s /usr/bin/gdb-multiarch /usr/local/bin/arm-none-eabi-gdb
     fi
 fi
 
