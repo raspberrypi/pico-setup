@@ -155,7 +155,7 @@ fi
 if [[ "$SKIP_UART" == 1 ]]; then
     echo "Skipping uart configuration"
 else
-    sudo apt install $UART_DEPS
+    sudo apt install -y $UART_DEPS
     echo "Disabling Linux serial console (UART) so we can use it for pico"
     sudo raspi-config nonint do_serial 2
     echo "You must run sudo reboot to finish UART setup"
