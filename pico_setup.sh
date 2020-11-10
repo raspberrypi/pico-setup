@@ -138,7 +138,7 @@ else
         fi
 
         wget -O vscode.deb $VSCODE_DEB
-        sudo apt install -y ./vscode.deb
+        sudo dpkg -i ./vscode.deb
         sudo apt install -y $EXTRA_VSCODE_DEPS
 
         # Get extensions
