@@ -131,7 +131,7 @@ else
         echo "Skipping vscode as vscode.deb exists"
     else
         echo "Installing VSCODE"
-        if uname -m | grep -q arm64; then
+        if uname -m | grep -q aarch64; then
             VSCODE_DEB="https://aka.ms/linux-arm64-deb"
         else
             VSCODE_DEB="https://aka.ms/linux-armhf-deb"
