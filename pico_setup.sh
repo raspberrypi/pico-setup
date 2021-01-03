@@ -64,7 +64,7 @@ else
     git submodule update
 
     # Define PICO_SDK_PATH in ~/.bashrc
-    echo "Adding PICO_SDK_PATH" to ~/.bashrc
+    echo "Adding PICO_SDK_PATH to ~/.bashrc"
     echo "export PICO_SDK_PATH=$PICO_SDK_PATH" >> ~/.bashrc
 fi
 
