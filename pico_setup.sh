@@ -101,22 +101,27 @@ cd $OUTDIR
 for REPO in picoprobe picotool
 do
     DEST="$OUTDIR/$REPO"
-    REPO_URL="${GITHUB_PREFIX}${REPO}${GITHUB_SUFFIX}"
-    git clone $REPO_URL
 
-    # Build both
-    cd $DEST
-    mkdir build
-    cd build
-    cmake ../
-    make -j$JNUM
+    if [ -d $DEST ]; then
+        echo "$DEST already exists so skipping"
+    else
+        REPO_URL="${GITHUB_PREFIX}${REPO}${GITHUB_SUFFIX}"
+        git clone $REPO_URL
 
-    if [[ "$REPO" == "picotool" ]]; then
-        echo "Installing picotool to /usr/local/bin/picotool"
-        sudo cp picotool /usr/local/bin/
+        # Build both
+        cd $DEST
+        mkdir build
+        cd build
+        cmake ../
+        make -j$JNUM
+
+        if [[ "$REPO" == "picotool" ]]; then
+            echo "Installing picotool to /usr/local/bin/picotool"
+            sudo cp picotool /usr/local/bin/
+        fi
+
+        cd $OUTDIR
     fi
-
-    cd $OUTDIR
 done
 
 if [ -d openocd ]; then
