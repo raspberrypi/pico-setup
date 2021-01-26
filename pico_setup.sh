@@ -83,7 +83,7 @@ source ~/.bashrc
 
 # Build a couple of examples
 cd "$OUTDIR/pico-examples"
-mkdir build
+mkdir -p build
 cd build
 cmake ../ -DCMAKE_BUILD_TYPE=Debug
 
@@ -106,7 +106,7 @@ do
 
     # Build both
     cd $DEST
-    mkdir build
+    mkdir -p build
     cd build
     cmake ../
     make -j$JNUM
