@@ -83,7 +83,7 @@ source ~/.bashrc
 
 # Build a couple of examples
 cd "$OUTDIR/pico-examples"
-mkdir build
+mkdir -p build
 cd build
 cmake ../ -DCMAKE_BUILD_TYPE=Debug
 
@@ -102,11 +102,14 @@ for REPO in picoprobe picotool
 do
     DEST="$OUTDIR/$REPO"
     REPO_URL="${GITHUB_PREFIX}${REPO}${GITHUB_SUFFIX}"
-    git clone $REPO_URL
+    if [ ! -d $DEST ]; then
+        git clone $REPO_URL
+    fi
 
     # Build both
+    echo "Building $REPO"
     cd $DEST
-    mkdir build
+    mkdir -p build
     cd build
     cmake ../
     make -j$JNUM
