@@ -52,6 +52,9 @@ GITHUB_PREFIX="https://github.com/raspberrypi/"
 GITHUB_SUFFIX=".git"
 SDK_BRANCH="master"
 
+# Add blank line to ~/.profile before adding our path-vars
+echo "" >> ~/.profile
+
 for REPO in sdk examples extras playground
 do
     DEST="$OUTDIR/pico-$REPO"
