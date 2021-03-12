@@ -52,6 +52,9 @@ GITHUB_PREFIX="https://github.com/raspberrypi/"
 GITHUB_SUFFIX=".git"
 SDK_BRANCH="master"
 
+# Add blank line to ~/.profile before adding our path-vars
+echo "" >> ~/.profile
+
 for REPO in sdk examples extras playground
 do
     DEST="$OUTDIR/pico-$REPO"
@@ -68,18 +71,16 @@ do
         git submodule update --init
         cd $OUTDIR
 
-        # Define PICO_SDK_PATH in ~/.bashrc
+        # Define PICO_XXXX_PATH in ~/.profile
         VARNAME="PICO_${REPO^^}_PATH"
-        echo "Adding $VARNAME to ~/.bashrc"
-        echo "export $VARNAME=$DEST" >> ~/.bashrc
+        echo "Adding $VARNAME to ~/.profile"
+        echo "export $VARNAME=$DEST" >> ~/.profile
         export ${VARNAME}=$DEST
     fi
 done
 
 cd $OUTDIR
 
-# Pick up new variables we just defined
-source ~/.bashrc
 
 # Build a couple of examples
 cd "$OUTDIR/pico-examples"
