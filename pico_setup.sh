@@ -10,7 +10,7 @@ else
 fi
 
 # Number of cores when running make
-JNUM=4
+JNUM=$(cat /proc/cpuinfo | grep processor | wc -l)
 
 # Where will the output go?
 OUTDIR="$(pwd)/pico"
@@ -44,8 +44,8 @@ sudo apt install -y $DEPS
 
 echo "Creating $OUTDIR"
 # Create pico directory to put everything in
-mkdir -p $OUTDIR
-cd $OUTDIR
+mkdir -p "$OUTDIR"
+cd "$OUTDIR"
 
 # Clone sw repos
 GITHUB_PREFIX="https://github.com/raspberrypi/"
@@ -56,7 +56,7 @@ for REPO in sdk examples extras playground
 do
     DEST="$OUTDIR/pico-$REPO"
 
-    if [ -d $DEST ]; then
+    if [ -d "$DEST" ]; then
         echo "$DEST already exists so skipping"
     else
         REPO_URL="${GITHUB_PREFIX}pico-${REPO}${GITHUB_SUFFIX}"
@@ -64,19 +64,19 @@ do
         git clone -b $SDK_BRANCH $REPO_URL
 
         # Any submodules
-        cd $DEST
+        cd "$DEST"
         git submodule update --init
-        cd $OUTDIR
+        cd "$OUTDIR"
 
         # Define PICO_SDK_PATH in ~/.bashrc
         VARNAME="PICO_${REPO^^}_PATH"
         echo "Adding $VARNAME to ~/.bashrc"
-        echo "export $VARNAME=$DEST" >> ~/.bashrc
-        export ${VARNAME}=$DEST
+        echo "export $VARNAME=\"$DEST\"" >> ~/.bashrc
+        export ${VARNAME}="$DEST"
     fi
 done
 
-cd $OUTDIR
+cd "$OUTDIR"
 
 # Pick up new variables we just defined
 source ~/.bashrc
@@ -90,12 +90,12 @@ cmake ../ -DCMAKE_BUILD_TYPE=Debug
 for e in blink hello_world
 do
     echo "Building $e"
-    cd $e
+    cd "$e"
     make -j$JNUM
     cd ..
 done
 
-cd $OUTDIR
+cd "$OUTDIR"
 
 # Picoprobe and picotool
 for REPO in picoprobe picotool
@@ -105,7 +105,7 @@ do
     git clone $REPO_URL
 
     # Build both
-    cd $DEST
+    cd "$DEST"
     mkdir build
     cd build
     cmake ../
@@ -116,7 +116,7 @@ do
         sudo cp picotool /usr/local/bin/
     fi
 
-    cd $OUTDIR
+    cd "$OUTDIR"
 done
 
 if [ -d openocd ]; then
@@ -129,7 +129,7 @@ if [[ "$SKIP_OPENOCD" == 1 ]]; then
 else
     # Build OpenOCD
     echo "Building OpenOCD"
-    cd $OUTDIR
+    cd "$OUTDIR"
     # Should we include picoprobe support (which is a Pico acting as a debugger for another Pico)
     INCLUDE_PICOPROBE=1
     OPENOCD_BRANCH="rp2040"
@@ -147,7 +147,7 @@ else
     sudo make install
 fi
 
-cd $OUTDIR
+cd "$OUTDIR"
 
 # Liam needed to install these to get it working
 EXTRA_VSCODE_DEPS="libx11-xcb1 libxcb-dri3-0 libdrm2 libgbm1 libegl-mesa0"
