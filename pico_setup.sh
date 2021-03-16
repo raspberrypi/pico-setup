@@ -10,7 +10,7 @@ else
 fi
 
 # Number of cores when running make
-JNUM=4
+JNUM=$(cat /proc/cpuinfo | grep processor | wc -l)
 
 # Where will the output go?
 OUTDIR="$(pwd)/pico"
