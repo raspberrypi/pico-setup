@@ -1,0 +1,125 @@
+#!/usr/bin/env bash
+
+# Executes the full test suite on the local host
+#
+# Configurations env vars:
+
+set -ex
+
+WORKING_DIR="$(pwd)/pico"
+
+mac() {
+    # Returns true iff this is running on macOS and presumably Apple hardware
+    uname | grep -q "^Darwin$"
+    return ${?}
+}
+
+fail() {
+    # Outputs a failure message and exits with the error code output by the previous call.
+    # All args are echoed as a failure message.
+
+    R="${?}"
+    echo "Tests failed! 😢"
+    if [ ${*} ]; then
+        echo "${*}"
+    fi
+    exit ${R}
+}
+
+test_git_repo() {
+    # tests that the given relative path exists and is a git repo
+    git -C ${WORKING_DIR}/${1} status || fail
+}
+
+test_toolchain_linux() {
+    # test that the expected packages are installed
+    dpkg-query -s git cmake gcc-arm-none-eabi build-essential gdb-multiarch automake autoconf build-essential texinfo libtool libftdi-dev libusb-1.0-0-dev || fail
+}
+
+test_toolchain_mac() {
+    # test that the expected packages are installed
+    brew list git cmake pkg-config libtool automake libusb wget pkg-config gcc texinfo arm-none-eabi-gcc
+}
+
+test_pico_sdk() {
+    test_git_repo pico-sdk
+
+    # test that the SDK env var is set and correct
+    test "${PICO_SDK_PATH}" = "${WORKING_DIR}/pico-sdk" || fail
+}
+
+test_pico_examples() {
+    test_git_repo pico-examples
+
+    # test that blink is built
+    test -f ${WORKING_DIR}/pico-examples/build/blink/blink.uf2 || fail
+
+    # test that hello_serial is built
+    test -f ${WORKING_DIR}/pico-examples/build/hello_world/serial/hello_serial.uf2 || fail
+
+    # test that hello_usb is built
+    test -f ${WORKING_DIR}/pico-examples/build/hello_world/usb/hello_usb.uf2 || fail
+}
+
+test_pico_extras() {
+    test_git_repo pico-extras
+}
+
+test_pico_playground() {
+    test_git_repo pico-playground
+}
+
+test_picotool() {
+    test_git_repo picotool
+
+    # test that the binary is built
+    test -x ${WORKING_DIR}/picotool/build/picotool || fail
+
+    # test that picotool is installed in the expected location
+    test -x /usr/local/bin/picotool || fail
+}
+
+test_openocd() {
+    test_git_repo openocd
+
+    # test that the binary is built
+    test -x ${WORKING_DIR}/openocd/src/openocd || fail
+}
+
+test_picoprobe() {
+    test_git_repo picoprobe || fail
+
+    # test that the binary is built
+    test -f ${WORKING_DIR}/picoprobe/build/picoprobe.uf2 || fail
+}
+
+test_vscode_linux() {
+    dpkg-query -s code || fail
+}
+
+test_vscode_mac() {
+    echo "This script can't tell whether Visual Studio Code is installed on macOS"
+}
+
+# execute tests
+if mac; then
+    test_toolchain_mac
+else
+    test_toolchain_linux
+fi
+
+test_pico_sdk
+
+test_pico_examples
+test_pico_extras
+test_pico_playground
+test_openocd
+test_picoprobe
+test_picotool
+if mac; then
+    test_vscode_mac
+else
+    test_vscode_mac
+fi
+
+echo "Tests passed! 😁"
