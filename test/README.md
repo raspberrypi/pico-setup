@@ -18,21 +18,21 @@ Test support for the following platforms. The general process is:
 1. Start from a fresh OS image.
 1. Start the SSH service if necessary: `sudo /sbin/service ssh start`
 1. Push down the contents of the pico-setup repo from your dev host: `scp -r ~/git/raspberrypi/pico-setup/ pi@pi4:`
-1. SSH to the test host and execute the setup: `pico-setup/pico_setup.sh`
-1. Test the setup: "ssh pi@pi4 pico-setup/test/test"
+1. SSH to the test host and execute the setup: `ssh pi@pi4 pico-setup/pico_setup.sh`
+1. Logout to pick up env variables and test the setup: `ssh pi@pi4 pico-setup/test/test`
 
-### Raspberry Pi OS Full (32-bit) on Raspberry Pi 4B
+### Raspberry Pi OS (32-bit) on Raspberry Pi 4B
 This is the baseline platform, what most users will have.
 
 Write fresh SD card with Raspberry Pi Imager.
 
-### Raspberry Pi OS Full (64-bit) on Raspberry Pi 4B
+### Raspberry Pi OS (64-bit) on Raspberry Pi 4B
 If all of the dependencies (APT repo, etc) are in good shape, this should work the same as the 32-bit OS, since we don't do anything explicitly for one or the other.
 
 Write fresh SD card with Raspberry Pi Imager.
 
 ### Raspberry Pi OS Lite (32-bit) on Raspberry Pi 4B
-Should be the same as the full OS, but doesn't attempt to install VS Code, because there will be no XWindows.
+Should be the same as the full OS. Currently, this will install Visual Studio Code, but that may change.
 
 Write fresh SD card with Raspberry Pi Imager.
 
@@ -80,20 +80,27 @@ passwd ubuntu
 ```
 
 ### Debian 10 (Buster) on Graviton2
-Can be rented on [EC2](https://aws.amazon.com/marketplace/pp/B0859NK4HC?ref_=aws-mp-console-subscription-detail) for pennies/hour. Recommend t3.micro with 8 GiB EBS volume. Default user is `admin`. You will have to use sudo to set the user's password:
+Can be rented on [EC2](https://aws.amazon.com/marketplace/pp/B0859NK4HC?ref_=aws-mp-console-subscription-detail) for pennies/hour. Recommend t4g.micro with 8 GiB EBS volume. Default user is `admin`. You will have to use sudo to set the user's password:
 ```shell
 sudo -i
 passwd admin
 ```
 
 ### Windows Server 2016 Base on x86_64
-https://aws.amazon.com/marketplace/server/procurement?productId=13c2dbc9-57fc-4958-922e-a1ba7e223b0d
+Not yet tested. See https://aws.amazon.com/marketplace/server/procurement?productId=13c2dbc9-57fc-4958-922e-a1ba7e223b0d.
 
-### Windows Server 2016 Base on x86_64
-https://aws.amazon.com/marketplace/server/procurement?productId=ef297a90-3ad0-4674-83b4-7f0ec07c39bb
+### Ubuntu 20.04 on WSL2 on Windows Server 2019 Base on x86_64
+Not yet tested. https://aws.amazon.com/marketplace/server/procurement?productId=ef297a90-3ad0-4674-83b4-7f0ec07c39bb.
 
-### Ubuntu on WSL2 on Windows Server 2016 Base on x86_64
-Not yet tested.
+t3.large
+
+https://docs.microsoft.com/en-us/windows/wsl/install-on-server
+
+Download Linux archive
+
+Find archive and extract all
+Run the program. 
+
 
 ### Debian 10 (Buster) on WSL2 on Windows Server 2016 Base on x86_64
 Not yet tested.
