@@ -161,23 +161,6 @@ clone_repo() {
     DEST="${WORKING_DIR}/${REPO_NAME}"
 
     if [ -d "${DEST}" ]; then
-<<<<<<< HEAD
-        echo "Not cloning $DEST because it already exists"
-    else
-        echo "Cloning $REPO_URL"
-        git clone -b "$BRANCH" "$REPO_URL" ${*}
-
-        # Any submodules
-        cd "$DEST"
-        git submodule update --init
-    fi
-}
-
-set_envs() {
-    # Permanently sets environment variables by adding them to the current user's profile script
-    # arguments should be in the form of FOO=foo BAR=bar
-
-=======
         echo "Not cloning ${DEST} because it already exists. If you really want to start over, delete it: rm -rf ${DEST}"
     else
         echo "Cloning ${REPO_URL}"
@@ -193,7 +176,6 @@ set_envs() {
     # Permanently sets environment variables by adding them to the current user's profile script
     # arguments should be in the form of FOO=foo BAR=bar
 
->>>>>>> 4f2c6f4... Major rewrite. Added support for macOS, Debian, Ubuntu. Added test/validation script.
     # detect appropriate file for setting env vars
     if echo "${SHELL}" | grep -q zsh; then
         # zsh detected
@@ -218,120 +200,6 @@ set_envs() {
         export "${EXPR}"
         
         # set for later
-<<<<<<< HEAD
-        set_env "${FILE}" "${EXPR}"
-    done
-}
-
-set_env() {
-    # Permanently sets one environment variable for bash
-    # $1 must be the file where the env is stored
-    # $2 should be in the form of VAR=value
-    FILE="${1}"
-    EXPR="${2}"
-
-    if ! grep -q "^export ${EXPR}$" ${FILE}; then
-        echo "Setting env variable ${EXPR} in ${FILE}"
-        echo "export ${EXPR}" >> ${FILE}
-    fi
-}
-
-setup_sdk() {
-    # Downloads and builds the SDK
-    cd "${WORKING_DIR}"
-
-    clone_repo pico-sdk
-
-    # Set env var PICO_SDK_PATH
-    REPO_UPPER=$(echo ${REPO_NAME} | tr "[:lower:]" "[:upper:]")
-    REPO_UPPER=$(echo ${REPO_UPPER} | tr "-" "_")
-    set_envs "${REPO_UPPER}_PATH=$DEST"
-}
-
-enable_uart() {
-    # Enable UART
-    sudo apt install -y minicom
-    echo "Disabling Linux serial console (UART) so we can use it for pico"
-    sudo raspi-config nonint do_serial 2
-    echo "You must run sudo reboot to finish UART setup"
-}
-
-phase_1() {
-    # Setup minimum dev environment
-    echo "Entering phase 1: Setup minimum dev environment"
-
-    if mac; then
-        install_toolchain_mac
-    else
-        install_toolchain_linux
-    fi
-
-    create_working_dir
-    setup_sdk
-
-    if linux && pi; then
-        if [[ "$SKIP_UART" == 1 ]]; then
-            echo "Skipping UART configuration"
-        else
-            enable_uart
-        fi
-    else
-        echo "Not configuring UART because this is not running Raspberry Pi OS on a Raspberry Pi computer"
-    fi
-}
-
-build_examples() {
-    # Build a couple of examples
-    echo "Building selected examples"
-    
-    cd "$WORKING_DIR/pico-examples"
-    mkdir -p build
-    cd build
-    cmake ../ -DCMAKE_BUILD_TYPE=Debug
-
-    for EXAMPLE in blink hello_world; do
-        echo "Building $EXAMPLE"
-        cd "$EXAMPLE"
-        make -j${JNUM}
-        cd ..
-    done
-}
-
-phase_2() {
-    # Setup tutorial repos
-    echo "Entering phase 2: Setting up tutorial repos"
-
-    for REPO_NAME in pico-examples pico-extras pico-playground; do
-        clone_repo "${REPO_NAME}"
-    done
-
-    build_examples
-}
-
-setup_picotool() {
-    # Downloads, builds, and installs picotool
-    echo "Setting up picotool"
-
-    cd "${WORKING_DIR}"
-
-    clone_repo picotool
-    cd "${WORKING_DIR}/picotool"
-    mkdir -p build
-    cd build
-    cmake ../
-    make -j${JNUM}
-
-    echo "Installing picotool to /usr/local/bin/picotool"
-    sudo cp picotool /usr/local/bin/
-}
-
-setup_openocd() {
-    # Download, build, and install OpenOCD for picoprobe and bit-banging without picoprobe
-    echo "Setting up OpenOCD"
-
-    cd "${WORKING_DIR}"
-
-=======
         if ! grep -q "^export ${EXPR}$" ${FILE}; then
             echo "Setting env variable ${EXPR} in ${FILE}"
             echo "export ${EXPR}" >> ${FILE}
@@ -430,7 +298,6 @@ setup_openocd() {
 
     cd "${WORKING_DIR}"
 
->>>>>>> 4f2c6f4... Major rewrite. Added support for macOS, Debian, Ubuntu. Added test/validation script.
     clone_repo openocd picoprobe --depth=1
     cd "${WORKING_DIR}/openocd"
     ./bootstrap
@@ -463,28 +330,16 @@ install_vscode_linux() {
 
     # VS Code is specially added to Raspberry Pi OS repos. Need to add the right repos to make it work on Debian/Ubuntu.
     if debian || ubuntu; then
-<<<<<<< HEAD
-        echo "Visual Studio Code installation currently doesn't work on Debian and Ubuntu"
-=======
         echo "Not yet implemented: testing Visual Studio Code on Debian/Ubuntu"
->>>>>>> 4f2c6f4... Major rewrite. Added support for macOS, Debian, Ubuntu. Added test/validation script.
         return
     fi
 
     echo "Installing Visual Studio Code"
-<<<<<<< HEAD
 
     cd "${WORKING_DIR}"
 
     sudo apt install -y code
 
-=======
-
-    cd "${WORKING_DIR}"
-
-    sudo apt install -y code
-
->>>>>>> 4f2c6f4... Major rewrite. Added support for macOS, Debian, Ubuntu. Added test/validation script.
     # Get extensions
     code --install-extension marus25.cortex-debug
     code --install-extension ms-vscode.cmake-tools
@@ -492,11 +347,7 @@ install_vscode_linux() {
 }
 
 install_vscode_mac() {
-<<<<<<< HEAD
-    echo "This script cannot install Visual Studio Code on macOS"
-=======
     echo "Not yet implemented: installing Visual Studio Code on macOS"
->>>>>>> 4f2c6f4... Major rewrite. Added support for macOS, Debian, Ubuntu. Added test/validation script.
 }
 
 phase_3() {
@@ -511,11 +362,7 @@ phase_3() {
     if mac; then
         install_vscode_mac
     else
-<<<<<<< HEAD
-        if dpkg-query -s libx11-6; then
-=======
         if dpkg-query -s xserver-xorg >> /dev/null; then
->>>>>>> 4f2c6f4... Major rewrite. Added support for macOS, Debian, Ubuntu. Added test/validation script.
             install_vscode_linux
         else
             echo "Not installing Visual Studio Code because it looks like XWindows is not installed."
@@ -532,8 +379,4 @@ main() {
     echo "Congratulations, installation is complete. 😁"
 }
 
-<<<<<<< HEAD
 main
-=======
-main
->>>>>>> 4f2c6f4... Major rewrite. Added support for macOS, Debian, Ubuntu. Added test/validation script.
