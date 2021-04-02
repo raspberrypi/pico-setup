@@ -8,8 +8,6 @@ set -ex
 
 WORKING_DIR="$(pwd)/pico"
 
-<<<<<<< HEAD
-=======
 linux() {
     # Returns true iff this is running on Linux
     uname | grep -q "^Linux$"
@@ -28,15 +26,12 @@ ubuntu() {
     return ${?}
 }
 
->>>>>>> 4f2c6f4... Major rewrite. Added support for macOS, Debian, Ubuntu. Added test/validation script.
 mac() {
     # Returns true iff this is running on macOS and presumably Apple hardware
     uname | grep -q "^Darwin$"
     return ${?}
 }
 
-<<<<<<< HEAD
-=======
 raspberry_pi() {
     # Returns true iff this is running on a Raspberry Pi computer, regardless of the OS
     if [ -f /proc/cpuinfo ]; then
@@ -47,7 +42,6 @@ raspberry_pi() {
 }
 
 
->>>>>>> 4f2c6f4... Major rewrite. Added support for macOS, Debian, Ubuntu. Added test/validation script.
 fail() {
     # Outputs a failure message and exits with the error code output by the previous call.
     # All args are echoed as a failure message.
@@ -82,8 +76,6 @@ test_pico_sdk() {
     test "${PICO_SDK_PATH}" = "${WORKING_DIR}/pico-sdk" || fail
 }
 
-<<<<<<< HEAD
-=======
 test_uart() {
     # test that the UART is configured. Only works on Raspberry Pi OS on Raspberry Pi hardware.
     dpkg-query -s minicom || fail
@@ -92,7 +84,6 @@ test_uart() {
     grep -q "console=serial0" /boot/cmdline.txt && fail
 }
 
->>>>>>> 4f2c6f4... Major rewrite. Added support for macOS, Debian, Ubuntu. Added test/validation script.
 test_pico_examples() {
     test_git_repo pico-examples
 
@@ -143,16 +134,10 @@ test_vscode_linux() {
 }
 
 test_vscode_mac() {
-<<<<<<< HEAD
-    echo "This script can't tell whether Visual Studio Code is installed on macOS"
-}
-
-=======
     echo "Not yet implemented: testing Visual Studio Code on macOS"
 }
 
 
->>>>>>> 4f2c6f4... Major rewrite. Added support for macOS, Debian, Ubuntu. Added test/validation script.
 # execute tests
 if mac; then
     test_toolchain_mac
@@ -162,13 +147,10 @@ fi
 
 test_pico_sdk
 
-<<<<<<< HEAD
-=======
 if raspbian && raspberry_pi; then
     test_uart
 fi
 
->>>>>>> 4f2c6f4... Major rewrite. Added support for macOS, Debian, Ubuntu. Added test/validation script.
 test_pico_examples
 test_pico_extras
 test_pico_playground
@@ -178,13 +160,9 @@ test_picotool
 if mac; then
     test_vscode_mac
 else
-<<<<<<< HEAD
-    test_vscode_mac
-=======
     if dpkg-query -s xserver-xorg >> /dev/null && ! (debian || ubuntu); then
         test_vscode_linux
     fi
->>>>>>> 4f2c6f4... Major rewrite. Added support for macOS, Debian, Ubuntu. Added test/validation script.
 fi
 
 echo "Tests passed! 😁"

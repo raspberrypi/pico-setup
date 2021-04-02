@@ -20,7 +20,6 @@
 # Download and install Visual Studio Code and required extensions
 
 
-
 # Exit on error
 set -e
 # Show all commands
@@ -112,7 +111,7 @@ phase_0() {
 install_toolchain_linux() {
     # Install toolchain for Linux
 
-    DEPS="git cmake gcc-arm-none-eabi build-essential gdb-multiarch automake autoconf build-essential texinfo libtool libftdi-dev libusb-1.0-0-dev"
+    DEPS="python3 git cmake gcc-arm-none-eabi build-essential gdb-multiarch automake autoconf build-essential texinfo libtool libftdi-dev libusb-1.0-0-dev"
     if debian || ubuntu; then
         DEPS="${DEPS} pkg-config libstdc++-arm-none-eabi-newlib"
     fi
@@ -172,9 +171,10 @@ clone_repo() {
     fi
 }
 
-set_envs() {
-    # Permanently sets environment variables by adding them to the current user's profile script
-    # arguments should be in the form of FOO=foo BAR=bar
+set_env() {
+    # Permanently sets an environment variable by adding it to the current user's profile script
+    # $1 should be in the form of FOO=foo
+    EXPR="${1}"
 
     # detect appropriate file for setting env vars
     if echo "${SHELL}" | grep -q zsh; then
@@ -186,25 +186,23 @@ set_envs() {
     fi
 
     # ensure that appends go to a new line
-    if [ -f ${FILE} ]; then
-        if tail -n 1 ${FILE} | grep -q "^$"; then
+    if [ -f "${FILE}" ]; then
+        if tail -n 1 "${FILE}" | grep -q "^$"; then
             echo "${FILE} exists and has trailing newline."
         else
             echo "${FILE} exists but has no trailing newline. Adding newline."
-            echo >> ${FILE}
+            echo >> "${FILE}"
         fi
     fi
 
-    for EXPR in ${*}; do
-        # set for now
-        export "${EXPR}"
-        
-        # set for later
-        if ! grep -q "^export ${EXPR}$" ${FILE}; then
-            echo "Setting env variable ${EXPR} in ${FILE}"
-            echo "export ${EXPR}" >> ${FILE}
-        fi
-    done
+    # set for now
+    export "${EXPR}"
+    
+    # set for later
+    if ! grep -q "^export ${EXPR}$" "${FILE}"; then
+        echo "Setting env variable ${EXPR} in ${FILE}"
+        echo "export \"${EXPR}\"" >> "${FILE}"
+    fi
 }
 
 setup_sdk() {
@@ -216,7 +214,7 @@ setup_sdk() {
     # Set env var PICO_SDK_PATH
     REPO_UPPER=$(echo ${REPO_NAME} | tr "[:lower:]" "[:upper:]")
     REPO_UPPER=$(echo ${REPO_UPPER} | tr "-" "_")
-    set_envs "${REPO_UPPER}_PATH=$DEST"
+    set_env "${REPO_UPPER}_PATH=$DEST"
 }
 
 enable_uart() {

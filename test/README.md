@@ -32,11 +32,18 @@ If all of the dependencies (APT repo, etc) are in good shape, this should work t
 Write fresh SD card with Raspberry Pi Imager.
 
 ### Raspberry Pi OS Lite (32-bit) on Raspberry Pi 4B
-Should be the same as the full OS. Currently, this will install Visual Studio Code, but that may change.
+Should be the same as the full OS, but doesn't install Visual Studio Code because there's no XWindows.
 
 Write fresh SD card with Raspberry Pi Imager.
 
 ### Ubuntu Desktop 20.10 (64-bit) on Raspberry Pi 4B
+Not yet tested.
+
+Less common. Should work a lot like Raspberry Pi OS, but with a couple different package dependencies.
+
+Write fresh SD card with Raspberry Pi Imager.
+
+### Ubuntu Server 20.10 (32-bit) on Raspberry Pi 4B
 Less common. Should work a lot like Raspberry Pi OS, but with a couple different package dependencies.
 
 Write fresh SD card with Raspberry Pi Imager.
@@ -89,25 +96,29 @@ passwd admin
 ### Windows Server 2016 Base on x86_64
 Not yet tested. See https://aws.amazon.com/marketplace/server/procurement?productId=13c2dbc9-57fc-4958-922e-a1ba7e223b0d.
 
-### Ubuntu 20.04 on WSL2 on Windows Server 2019 Base on x86_64
-Not yet tested. https://aws.amazon.com/marketplace/server/procurement?productId=ef297a90-3ad0-4674-83b4-7f0ec07c39bb.
+### Ubuntu 20.04 on WSL1 on Windows Server 2019 Base on x86_64
+Can be rented on [EC2](https://aws.amazon.com/marketplace/server/procurement?productId=ef297a90-3ad0-4674-83b4-7f0ec07c39bb) for pennies/hour. Recommend t3.large. Default user is `ec2-user`. Connect with Microsoft Remote Desktop.
 
-t3.large
+Install WSL according to https://docs.microsoft.com/en-us/windows/wsl/install-on-server. Install Ubuntu for WSL
 
-https://docs.microsoft.com/en-us/windows/wsl/install-on-server
+In the Linux shell:
+```shell
+wget https://raw.githubusercontent.com/raspberrypi/pico-setup/master/pico_setup.sh
+chmod +x pico_setup.sh
+./pico_setup.sh
+```
 
-Download Linux archive
+### Debian GNU/Linux 1.3.0.0 on WSL1 on Windows Server 2019 Base on x86_64
+Similar instructions as Ubuntu, but using the Debian WSL package and you'll have to explicitly install wget:
+```shell
+sudo apt update
+sudo apt install -y wget
+```
 
-Find archive and extract all
-Run the program. 
-
-
-### Debian 10 (Buster) on WSL2 on Windows Server 2016 Base on x86_64
-Not yet tested.
+Currently fails due to lack of python3.
 
 ## Scenarios
 Test some scenarios:
 * Shells: bash, zsh. It should be enough to switch shells and rerun the installer and test. You don't have to wipe the SD card/disk.
 * .profile or .zprofile doesn't end in newline
-* PWD containing space
-* Raspberry Pi OS Lite (32-bit) shouldn't install VS Code
+* PWD containing space. The script seems to handle it but a OpenOCD submodule, jimctl, doesn't.
