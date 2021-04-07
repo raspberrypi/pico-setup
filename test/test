@@ -47,7 +47,7 @@ fail() {
     # All args are echoed as a failure message.
 
     R="${?}"
-    echo "Tests failed! 😢"
+    echo "Tests failed! :'-("
     if [ ${*} ]; then
         echo "${*}"
     fi
@@ -165,4 +165,4 @@ else
     fi
 fi
 
-echo "Tests passed! 😁"
+echo "Tests passed! :D"

@@ -3,12 +3,12 @@
 # Phase 0: Preflight check
 # Verify baseline dependencies
 
-# Phase 1: Setup minimum dev environment
-# Install the toolchain
+# Phase 1: Setup dev environment
+# Install the software packages from APT or Homebrew
 # Create a directory called pico
 # Download the pico-sdk repository and submodules
-# Define env variables for repo: PICO_SDK_PATH
-# Configure the Raspberry Pi UART for use with Raspberry Pi Pico
+# Define env variables: PICO_SDK_PATH
+# On Raspberry Pi only: configure the UART for use with Raspberry Pi Pico
 
 # Phase 2: Setting up tutorial repos
 # Download pico-examples, pico-extras, pico-playground repositories, and submodules
@@ -24,13 +24,19 @@
 set -e
 # Show all commands
 set -x
-
+# Trying to use an non-existent variable is an error
+set -u
 
 # Number of cores when running make
 JNUM=4
 
 # Where will the output go?
-WORKING_DIR="$(pwd)/pico"
+if printenv TARGET_DIR; then
+    echo "Using target dir from \$TARGET_DIR: ${TARGET_DIR}"
+else
+    TARGET_DIR="$(pwd)/pico"
+    echo "Using target dir: ${TARGET_DIR}"
+fi
 
 
 linux() {
@@ -73,7 +79,7 @@ raspberry_pi() {
 }
 
 phase_0() {
-    # Preflight the check
+    # Preflight check
     # Checks the baseline dependencies. If you don't have these, this script won't work.
     echo "Entering phase 0: Preflight check"
     
@@ -108,12 +114,12 @@ phase_0() {
     fi
 }
 
-install_toolchain_linux() {
-    # Install toolchain for Linux
+install_dev_env_deps_linux() {
+    # Install development environment dependencies for Linux
 
-    DEPS="python3 git cmake gcc-arm-none-eabi build-essential gdb-multiarch automake autoconf build-essential texinfo libtool libftdi-dev libusb-1.0-0-dev"
+    DEPS="python3 git cmake gcc-arm-none-eabi build-essential gdb-multiarch automake autoconf build-essential texinfo libtool libftdi-dev libusb-1.0-0-dev minicom pkg-config"
     if debian || ubuntu; then
-        DEPS="${DEPS} pkg-config libstdc++-arm-none-eabi-newlib"
+        DEPS="${DEPS} libstdc++-arm-none-eabi-newlib"
     fi
     sudo apt install -y ${DEPS}
 }
@@ -124,51 +130,55 @@ brew_install_idempotent() {
     return ${?}
 }
 
-install_toolchain_mac() {
-    # Install dependencies for mac
+install_dev_env_deps_mac() {
+    # Install development environment dependencies for mac
 
-    brew_install_idempotent git cmake pkg-config libtool automake libusb wget pkg-config gcc texinfo
-    brew tap ArmMbed/homebrew-formulae
-    brew_install_idempotent arm-none-eabi-gcc
+    brew_install_idempotent git cmake pkg-config libtool automake libusb wget pkg-config gcc texinfo minicom ArmMbed/homebrew-formulae/arm-none-eabi-gcc
 }
 
 create_working_dir() {
     # Creates ./pico directory if necessary
 
-    mkdir -p "${WORKING_DIR}"
+    mkdir -p "${TARGET_DIR}"
 }
 
-clone_repo() {
+clone_raspberrypi_repo() {
     # Clones the given repo name from GitHub and inits any submodules
     # $1 should be the full name of the repo, ex: pico-sdk
     # $2 should be the branch name. Defaults to master.
     # all other args are passed to git clone
     REPO_NAME="${1}"
-    if shift && [ "${1}" ]; then
+    if shift && [ ${#} -gt 0 ]; then
         BRANCH="${1}"
+        # Can't just say `shift` because `set -e` will think it's an error and terminate the script.
+        shift || true
     else
         BRANCH=master
     fi
-    if shift; then
-        # $* contains more args
-        true
-    fi
 
-    cd "${WORKING_DIR}"
+    # Save the working directory
+    pushd "${TARGET_DIR}" >> /dev/null
 
     REPO_URL="https://github.com/raspberrypi/${REPO_NAME}.git"
-    DEST="${WORKING_DIR}/${REPO_NAME}"
+    DEST="${TARGET_DIR}/${REPO_NAME}"
 
     if [ -d "${DEST}" ]; then
         echo "Not cloning ${DEST} because it already exists. If you really want to start over, delete it: rm -rf ${DEST}"
     else
         echo "Cloning ${REPO_URL}"
-        git clone -b "${BRANCH}" "${REPO_URL}" ${*}
+        if [ ${#} -gt 0 ]; then
+            git clone -b "${BRANCH}" "${REPO_URL}" ${*}
+        else
+            git clone -b "${BRANCH}" "${REPO_URL}"
+        fi
 
         # Any submodules
         cd "${DEST}"
         git submodule update --init
     fi
+
+    # Restore working directory
+    popd >> /dev/null
 }
 
 set_env() {
@@ -187,10 +197,8 @@ set_env() {
 
     # ensure that appends go to a new line
     if [ -f "${FILE}" ]; then
-        if tail -n 1 "${FILE}" | grep -q "^$"; then
-            echo "${FILE} exists and has trailing newline."
-        else
-            echo "${FILE} exists but has no trailing newline. Adding newline."
+        if ! ( tail -n 1 "${FILE}" | grep -q "^$" ); then
+            # FILE exists but has no trailing newline. Adding newline.
             echo >> "${FILE}"
         fi
     fi
@@ -206,20 +214,15 @@ set_env() {
 }
 
 setup_sdk() {
-    # Downloads and builds the SDK
-    cd "${WORKING_DIR}"
-
-    clone_repo pico-sdk
+    # Download the SDK
+    clone_raspberrypi_repo pico-sdk
 
     # Set env var PICO_SDK_PATH
-    REPO_UPPER=$(echo ${REPO_NAME} | tr "[:lower:]" "[:upper:]")
-    REPO_UPPER=$(echo ${REPO_UPPER} | tr "-" "_")
-    set_env "${REPO_UPPER}_PATH=$DEST"
+    set_env "PICO_SDK_PATH=${TARGET_DIR}/pico-sdk"
 }
 
 enable_uart() {
     # Enable UART
-    sudo apt install -y minicom
     echo "Disabling Linux serial console (UART) so we can use it for pico"
     sudo raspi-config nonint do_serial 2
     echo "You must run sudo reboot to finish UART setup"
@@ -230,18 +233,18 @@ phase_1() {
     echo "Entering phase 1: Setup minimum dev environment"
 
     if mac; then
-        install_toolchain_mac
+        install_dev_env_deps_mac
     else
-        install_toolchain_linux
+        install_dev_env_deps_linux
     fi
 
     create_working_dir
     setup_sdk
 
-    if raspbian && raspberry_pi; then
+    if raspberry_pi && which raspi-config >> /dev/null; then
         enable_uart
     else
-        echo "Not configuring UART because this is not running Raspberry Pi OS on a Raspberry Pi computer"
+        echo "Not configuring UART because this is not a Raspberry Pi computer, or raspi-config is unavailable."
     fi
 }
 
@@ -249,7 +252,7 @@ build_examples() {
     # Build a couple of examples
     echo "Building selected examples"
     
-    cd "$WORKING_DIR/pico-examples"
+    cd "$TARGET_DIR/pico-examples"
     mkdir -p build
     cd build
     cmake ../ -DCMAKE_BUILD_TYPE=Debug
@@ -267,7 +270,7 @@ phase_2() {
     echo "Entering phase 2: Setting up tutorial repos"
 
     for REPO_NAME in pico-examples pico-extras pico-playground; do
-        clone_repo "${REPO_NAME}"
+        clone_raspberrypi_repo "${REPO_NAME}"
     done
 
     build_examples
@@ -277,10 +280,10 @@ setup_picotool() {
     # Downloads, builds, and installs picotool
     echo "Setting up picotool"
 
-    cd "${WORKING_DIR}"
+    cd "${TARGET_DIR}"
 
-    clone_repo picotool
-    cd "${WORKING_DIR}/picotool"
+    clone_raspberrypi_repo picotool
+    cd "${TARGET_DIR}/picotool"
     mkdir -p build
     cd build
     cmake ../
@@ -294,10 +297,10 @@ setup_openocd() {
     # Download, build, and install OpenOCD for picoprobe and bit-banging without picoprobe
     echo "Setting up OpenOCD"
 
-    cd "${WORKING_DIR}"
+    cd "${TARGET_DIR}"
 
-    clone_repo openocd picoprobe --depth=1
-    cd "${WORKING_DIR}/openocd"
+    clone_raspberrypi_repo openocd picoprobe --depth=1
+    cd "${TARGET_DIR}/openocd"
     ./bootstrap
     OPTS="--enable-ftdi --enable-bcm2835gpio  --enable-picoprobe"
     if linux; then
@@ -313,10 +316,10 @@ setup_picoprobe() {
     # Download and build picoprobe. Requires that OpenOCD is already setup
     echo "Setting up picoprobe"
 
-    cd "${WORKING_DIR}"
+    cd "${TARGET_DIR}"
 
-    clone_repo picoprobe
-    cd "${WORKING_DIR}/picoprobe"
+    clone_raspberrypi_repo picoprobe
+    cd "${TARGET_DIR}/picoprobe"
     mkdir -p build
     cd build
     cmake ..
@@ -326,15 +329,13 @@ setup_picoprobe() {
 install_vscode_linux() {
     # Install Visual Studio Code
 
-    # VS Code is specially added to Raspberry Pi OS repos. Need to add the right repos to make it work on Debian/Ubuntu.
-    if debian || ubuntu; then
-        echo "Not yet implemented: testing Visual Studio Code on Debian/Ubuntu"
+    # VS Code is specially added to Raspberry Pi OS repos, but might not be present on Debian/Ubuntu. So we check first.
+    if ! apt list code; then
+        echo "It appears that your APT repos do not offer Visual Studio Code. Skipping."
         return
     fi
 
     echo "Installing Visual Studio Code"
-
-    cd "${WORKING_DIR}"
 
     sudo apt install -y code
 
@@ -374,7 +375,7 @@ main() {
     phase_2
     phase_3
 
-    echo "Congratulations, installation is complete. 😁"
+    echo "Congratulations, installation is complete. :D"
 }
 
 main
