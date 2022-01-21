@@ -135,7 +135,6 @@ else
     OPENOCD_BRANCH="rp2040"
     OPENOCD_CONFIGURE_ARGS="--enable-ftdi --enable-sysfsgpio --enable-bcm2835gpio"
     if [[ "$INCLUDE_PICOPROBE" == 1 ]]; then
-        OPENOCD_BRANCH="picoprobe"
         OPENOCD_CONFIGURE_ARGS="$OPENOCD_CONFIGURE_ARGS --enable-picoprobe"
     fi
 
