@@ -99,6 +99,7 @@ do
 
     # Build both
     cd $DEST
+    git submodule update --init
     mkdir build
     cd build
     cmake ../
