@@ -17,7 +17,7 @@ OUTDIR="$(pwd)/pico"
 
 # Install dependencies
 GIT_DEPS="git"
-SDK_DEPS="cmake gcc-arm-none-eabi gcc g++"
+SDK_DEPS="cmake gcc-arm-none-eabi gcc g++ pkg-config"
 OPENOCD_DEPS="gdb-multiarch automake autoconf build-essential texinfo libtool libftdi-dev libusb-1.0-0-dev"
 VSCODE_DEPS="code"
 UART_DEPS="minicom"
