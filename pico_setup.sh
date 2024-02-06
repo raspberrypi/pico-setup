@@ -90,8 +90,8 @@ done
 
 cd $OUTDIR
 
-# Picoprobe and picotool
-for REPO in picoprobe picotool
+# Debugprobe and picotool
+for REPO in debugprobe picotool
 do
     DEST="$OUTDIR/$REPO"
     REPO_URL="${GITHUB_PREFIX}${REPO}${GITHUB_SUFFIX}"
@@ -124,13 +124,8 @@ else
     # Build OpenOCD
     echo "Building OpenOCD"
     cd $OUTDIR
-    # Should we include picoprobe support (which is a Pico acting as a debugger for another Pico)
-    INCLUDE_PICOPROBE=1
     OPENOCD_BRANCH="rp2040-v0.12.0"
     OPENOCD_CONFIGURE_ARGS="--enable-ftdi --enable-sysfsgpio --enable-bcm2835gpio"
-    if [[ "$INCLUDE_PICOPROBE" == 1 ]]; then
-        OPENOCD_CONFIGURE_ARGS="$OPENOCD_CONFIGURE_ARGS --enable-picoprobe"
-    fi
 
     git clone "${GITHUB_PREFIX}openocd${GITHUB_SUFFIX}" -b $OPENOCD_BRANCH --depth=1
     cd openocd
