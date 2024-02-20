@@ -18,7 +18,7 @@ OUTDIR="$(pwd)/pico"
 # Install dependencies
 GIT_DEPS="git"
 SDK_DEPS="cmake gcc-arm-none-eabi gcc g++"
-OPENOCD_DEPS="gdb-multiarch automake autoconf build-essential texinfo libtool libftdi-dev libusb-1.0-0-dev"
+OPENOCD_DEPS="gdb-multiarch automake autoconf build-essential texinfo libtool libftdi-dev libusb-1.0-0-dev libgpiod-dev"
 VSCODE_DEPS="code"
 UART_DEPS="minicom"
 
@@ -127,7 +127,7 @@ else
     # Should we include picoprobe support (which is a Pico acting as a debugger for another Pico)
     INCLUDE_PICOPROBE=1
     OPENOCD_BRANCH="rp2040-v0.12.0"
-    OPENOCD_CONFIGURE_ARGS="--enable-ftdi --enable-sysfsgpio --enable-bcm2835gpio"
+    OPENOCD_CONFIGURE_ARGS="--enable-ftdi --enable-sysfsgpio --enable-bcm2835gpio --enable-linuxgpiod"
     if [[ "$INCLUDE_PICOPROBE" == 1 ]]; then
         OPENOCD_CONFIGURE_ARGS="$OPENOCD_CONFIGURE_ARGS --enable-picoprobe"
     fi
