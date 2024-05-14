@@ -19,7 +19,6 @@ OUTDIR="$(pwd)/pico"
 GIT_DEPS="git"
 SDK_DEPS="cmake gcc-arm-none-eabi gcc g++"
 OPENOCD_DEPS="gdb-multiarch automake autoconf build-essential texinfo libtool libftdi-dev libusb-1.0-0-dev"
-VSCODE_DEPS="code"
 UART_DEPS="minicom"
 
 # Build full list of dependencies
@@ -34,6 +33,7 @@ fi
 echo "Installing Dependencies"
 sudo apt update
 sudo apt install -y $DEPS
+sudo apt install pkgconf
 
 echo "Creating $OUTDIR"
 # Create pico directory to put everything in
@@ -146,7 +146,10 @@ if [[ "$SKIP_VSCODE" == 1 ]]; then
     echo "Skipping VSCODE"
 else
     echo "Installing VSCODE"
-    sudo apt install -y $VSCODE_DEPS
+     sudo apt install software-properties-common apt-transport-https wget -y
+     wget -q https://packages.microsoft.com/keys/microsoft.asc -O- | sudo apt-key add -
+     sudo add-apt-repository "deb [arch=amd64] https://packages.microsoft.com/repos/vscode stable main"
+     sudo apt install code
 
     # Get extensions
     code --install-extension marus25.cortex-debug
@@ -160,6 +163,7 @@ if [[ "$SKIP_UART" == 1 ]]; then
 else
     sudo apt install -y $UART_DEPS
     echo "Disabling Linux serial console (UART) so we can use it for pico"
+    sudo apt install raspi-config
     sudo raspi-config nonint do_serial 2
     echo "You must run sudo reboot to finish UART setup"
 fi
