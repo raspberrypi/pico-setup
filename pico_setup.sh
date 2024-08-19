@@ -75,6 +75,29 @@ cd $OUTDIR
 # Pick up new variables we just defined
 source ~/.bashrc
 
+# Picoprobe and picotool
+for REPO in picotool picoprobe
+do
+    DEST="$OUTDIR/$REPO"
+    REPO_URL="${GITHUB_PREFIX}${REPO}${GITHUB_SUFFIX}"
+    git clone $REPO_URL
+
+    # Build both
+    cd $DEST
+    git submodule update --init
+    mkdir build
+    cd build
+    cmake ../
+    make -j$JNUM
+
+    if [[ "$REPO" == "picotool" ]]; then
+        echo "Installing picotool"
+        sudo make install
+    fi
+
+    cd $OUTDIR
+done
+
 # Build blink and hello world for pico and pico2
 cd pico-examples
 for board in pico pico2
@@ -95,29 +118,6 @@ do
 done
 
 cd $OUTDIR
-
-# Picoprobe and picotool
-for REPO in picoprobe picotool
-do
-    DEST="$OUTDIR/$REPO"
-    REPO_URL="${GITHUB_PREFIX}${REPO}${GITHUB_SUFFIX}"
-    git clone $REPO_URL
-
-    # Build both
-    cd $DEST
-    git submodule update --init
-    mkdir build
-    cd build
-    cmake ../
-    make -j$JNUM
-
-    if [[ "$REPO" == "picotool" ]]; then
-        echo "Installing picotool to /usr/local/bin/picotool"
-        sudo cp picotool /usr/local/bin/
-    fi
-
-    cd $OUTDIR
-done
 
 if [ -d openocd ]; then
     echo "openocd already exists so skipping"
