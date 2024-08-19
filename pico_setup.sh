@@ -96,8 +96,8 @@ done
 
 cd $OUTDIR
 
-# Picoprobe and picotool
-for REPO in picoprobe picotool
+# Debugprobe and picotool
+for REPO in debugprobe picotool
 do
     DEST="$OUTDIR/$REPO"
     REPO_URL="${GITHUB_PREFIX}${REPO}${GITHUB_SUFFIX}"
