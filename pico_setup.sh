@@ -7,6 +7,7 @@ if grep -q Raspberry /proc/cpuinfo; then
     echo "Running on a Raspberry Pi"
 else
     echo "Not running on a Raspberry Pi. Use at your own risk!"
+    SKIP_UART=1
 fi
 
 # Number of cores when running make
@@ -74,17 +75,22 @@ cd $OUTDIR
 # Pick up new variables we just defined
 source ~/.bashrc
 
-# Build a couple of examples
-cd "$OUTDIR/pico-examples"
-mkdir build
-cd build
-cmake ../ -DCMAKE_BUILD_TYPE=Debug
-
-for e in blink hello_world
+# Build blink and hello world for pico and pico2
+cd pico-examples
+for board in pico pico2
 do
-    echo "Building $e"
-    cd $e
-    make -j$JNUM
+    build_dir=build_$board
+    mkdir $build_dir
+    cd $build_dir
+    cmake ../ -DPICO_BOARD=$board -DCMAKE_BUILD_TYPE=Debug
+    for e in blink hello_world
+    do
+        echo "Building $e for $board"
+        cd $e
+        make -j$JNUM
+        cd ..
+    done
+
     cd ..
 done
 
@@ -124,10 +130,9 @@ else
     # Build OpenOCD
     echo "Building OpenOCD"
     cd $OUTDIR
-    OPENOCD_BRANCH="rp2040-v0.12.0"
-    OPENOCD_CONFIGURE_ARGS="--enable-ftdi --enable-sysfsgpio --enable-bcm2835gpio"
+    OPENOCD_CONFIGURE_ARGS="--enable-ftdi --enable-sysfsgpio --enable-bcm2835gpio --disable-werror"
 
-    git clone "${GITHUB_PREFIX}openocd${GITHUB_SUFFIX}" -b $OPENOCD_BRANCH --depth=1
+    git clone "${GITHUB_PREFIX}openocd${GITHUB_SUFFIX}" --depth=1
     cd openocd
     ./bootstrap
     ./configure $OPENOCD_CONFIGURE_ARGS
@@ -136,18 +141,6 @@ else
 fi
 
 cd $OUTDIR
-
-if [[ "$SKIP_VSCODE" == 1 ]]; then
-    echo "Skipping VSCODE"
-else
-    echo "Installing VSCODE"
-    sudo apt install -y $VSCODE_DEPS
-
-    # Get extensions
-    code --install-extension marus25.cortex-debug
-    code --install-extension ms-vscode.cmake-tools
-    code --install-extension ms-vscode.cpptools
-fi
 
 # Enable UART
 if [[ "$SKIP_UART" == 1 ]]; then
