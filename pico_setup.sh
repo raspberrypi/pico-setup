@@ -75,8 +75,8 @@ cd $OUTDIR
 # Pick up new variables we just defined
 source ~/.bashrc
 
-# Picoprobe and picotool
-for REPO in picotool picoprobe
+# Debugprobe and picotool
+for REPO in picotool debugprobe
 do
     DEST="$OUTDIR/$REPO"
     REPO_URL="${GITHUB_PREFIX}${REPO}${GITHUB_SUFFIX}"
