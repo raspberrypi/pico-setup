@@ -43,6 +43,17 @@ cd $OUTDIR
 
 # Clone sw repos
 GITHUB_PREFIX="https://github.com/raspberrypi/"
+echo "Checking if github.com ssh authentication is used"
+USING_SSH_ON_GITHUB=0
+if [ -e ~/.ssh/config ]; then
+	grep -q github.com ~/.ssh/config && export USING_SSH_ON_GITHUB=1
+fi
+
+# if the user is using ssh on github then change github prefix according to ssh
+if [[ "$USING_SSH_ON_GITHUB" == 1 ]]; then
+	export GITHUB_PREFIX="git@github.com:raspberrypi/"
+fi
+
 GITHUB_SUFFIX=".git"
 SDK_BRANCH="master"
 
@@ -59,6 +70,11 @@ do
 
         # Any submodules
         cd $DEST
+	if [[ "$USING_SSH_ON_GITHUB" == 1 ]]; then
+	    if [ -e .gitmodules ]; then
+	        sed -i 's/https:\/\/github.com\//git@github.com:/' .gitmodules
+	    fi
+	fi
         git submodule update --init
         cd $OUTDIR
 
@@ -105,6 +121,11 @@ do
 
     # Build both
     cd $DEST
+    if [[ "$USING_SSH_ON_GITHUB" == 1 ]]; then
+	if [ -e .gitmodules ]; then
+	    sed -i 's/https:\/\/github.com\//git@github.com:/' .gitmodules
+	fi
+    fi
     git submodule update --init
     mkdir build
     cd build
