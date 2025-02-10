@@ -17,7 +17,7 @@ JNUM=4
 OUTDIR="$(pwd)/pico"
 
 # Install dependencies
-GIT_DEPS="git"
+GIT_DEPS="git git-lfs"
 SDK_DEPS="cmake gcc-arm-none-eabi gcc g++"
 OPENOCD_DEPS="gdb-multiarch automake autoconf build-essential texinfo libtool libftdi-dev libusb-1.0-0-dev"
 VSCODE_DEPS="code"
