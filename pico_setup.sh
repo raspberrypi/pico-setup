@@ -55,12 +55,7 @@ do
     else
         REPO_URL="${GITHUB_PREFIX}pico-${REPO}${GITHUB_SUFFIX}"
         echo "Cloning $REPO_URL"
-        git clone -b $SDK_BRANCH $REPO_URL
-
-        # Any submodules
-        cd $DEST
-        git submodule update --init
-        cd $OUTDIR
+        git clone -b $SDK_BRANCH --recurse-submodules $REPO_URL
 
         # Define PICO_SDK_PATH in ~/.bashrc
         VARNAME="PICO_${REPO^^}_PATH"
