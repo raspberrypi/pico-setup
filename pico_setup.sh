@@ -76,22 +76,18 @@ cd $OUTDIR
 source ~/.bashrc
 
 # Build blink and hello world for pico and pico2
-cd pico-examples
 for board in pico pico2
 do
+    # Build dirs will be outside of pico-* dirs
+    # so that it is not lost among all the subfolders
+    # of pico-examples
     build_dir=build_$board
-    mkdir $build_dir
-    cd $build_dir
-    cmake ../ -DPICO_BOARD=$board -DCMAKE_BUILD_TYPE=Debug
-    for e in blink hello_world
-    do
-        echo "Building $e for $board"
-        cd $e
-        make -j$JNUM
-        cd ..
-    done
-
-    cd ..
+    if [ -d $build_dir ]; then
+        echo "$build_dir already exists so skipping"
+    else
+        cmake ./pico-examples -B $build_dir -DPICO_BOARD=$board -DCMAKE_BUILD_TYPE=Debug
+        cmake --build $build_dir --target blink hello_serial hello_usb
+    fi
 done
 
 cd $OUTDIR
