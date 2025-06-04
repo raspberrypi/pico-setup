@@ -7,6 +7,7 @@ if grep -q Raspberry /proc/cpuinfo; then
     echo "Running on a Raspberry Pi"
 else
     echo "Not running on a Raspberry Pi. Use at your own risk!"
+    SKIP_UART=1
 fi
 
 # Number of cores when running make
@@ -16,9 +17,9 @@ JNUM=4
 OUTDIR="$(pwd)/pico"
 
 # Install dependencies
-GIT_DEPS="git"
+GIT_DEPS="git git-lfs"
 SDK_DEPS="cmake gcc-arm-none-eabi gcc g++"
-OPENOCD_DEPS="gdb-multiarch automake autoconf build-essential texinfo libtool libftdi-dev libusb-1.0-0-dev libgpiod-dev"
+OPENOCD_DEPS="gdb-multiarch automake autoconf build-essential texinfo libtool libftdi-dev libusb-1.0-0-dev libjim-dev pkg-config libgpiod-dev"
 VSCODE_DEPS="code"
 UART_DEPS="minicom"
 
@@ -74,28 +75,16 @@ cd $OUTDIR
 # Pick up new variables we just defined
 source ~/.bashrc
 
-# Build a couple of examples
-cd "$OUTDIR/pico-examples"
-mkdir build
-cd build
-cmake ../ -DCMAKE_BUILD_TYPE=Debug
-
-for e in blink hello_world
-do
-    echo "Building $e"
-    cd $e
-    make -j$JNUM
-    cd ..
-done
-
-cd $OUTDIR
-
-# Picoprobe and picotool
-for REPO in picoprobe picotool
+# Debugprobe and picotool
+for REPO in picotool debugprobe
 do
     DEST="$OUTDIR/$REPO"
     REPO_URL="${GITHUB_PREFIX}${REPO}${GITHUB_SUFFIX}"
-    git clone $REPO_URL
+    if [[ "$REPO" == "picotool" ]]; then
+      git clone -b $SDK_BRANCH $REPO_URL
+    else
+      git clone $REPO_URL
+    fi
 
     # Build both
     cd $DEST
@@ -106,12 +95,33 @@ do
     make -j$JNUM
 
     if [[ "$REPO" == "picotool" ]]; then
-        echo "Installing picotool to /usr/local/bin/picotool"
-        sudo cp picotool /usr/local/bin/
+        echo "Installing picotool"
+        sudo make install
     fi
 
     cd $OUTDIR
 done
+
+# Build blink and hello world for pico and pico2
+cd pico-examples
+for board in pico pico2
+do
+    build_dir=build_$board
+    mkdir $build_dir
+    cd $build_dir
+    cmake ../ -DPICO_BOARD=$board -DCMAKE_BUILD_TYPE=Debug
+    for e in blink hello_world
+    do
+        echo "Building $e for $board"
+        cd $e
+        make -j$JNUM
+        cd ..
+    done
+
+    cd ..
+done
+
+cd $OUTDIR
 
 if [ -d openocd ]; then
     echo "openocd already exists so skipping"
@@ -124,15 +134,9 @@ else
     # Build OpenOCD
     echo "Building OpenOCD"
     cd $OUTDIR
-    # Should we include picoprobe support (which is a Pico acting as a debugger for another Pico)
-    INCLUDE_PICOPROBE=1
-    OPENOCD_BRANCH="rp2040-v0.12.0"
-    OPENOCD_CONFIGURE_ARGS="--enable-ftdi --enable-sysfsgpio --enable-bcm2835gpio --enable-linuxgpiod"
-    if [[ "$INCLUDE_PICOPROBE" == 1 ]]; then
-        OPENOCD_CONFIGURE_ARGS="$OPENOCD_CONFIGURE_ARGS --enable-picoprobe"
-    fi
+    OPENOCD_CONFIGURE_ARGS="--enable-ftdi --enable-sysfsgpio --enable-bcm2835gpio --disable-werror --enable-linuxgpiod"
 
-    git clone "${GITHUB_PREFIX}openocd${GITHUB_SUFFIX}" -b $OPENOCD_BRANCH --depth=1
+    git clone "${GITHUB_PREFIX}openocd${GITHUB_SUFFIX}" --depth=1
     cd openocd
     ./bootstrap
     ./configure $OPENOCD_CONFIGURE_ARGS
@@ -141,18 +145,6 @@ else
 fi
 
 cd $OUTDIR
-
-if [[ "$SKIP_VSCODE" == 1 ]]; then
-    echo "Skipping VSCODE"
-else
-    echo "Installing VSCODE"
-    sudo apt install -y $VSCODE_DEPS
-
-    # Get extensions
-    code --install-extension marus25.cortex-debug
-    code --install-extension ms-vscode.cmake-tools
-    code --install-extension ms-vscode.cpptools
-fi
 
 # Enable UART
 if [[ "$SKIP_UART" == 1 ]]; then
