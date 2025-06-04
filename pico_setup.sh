@@ -80,7 +80,11 @@ for REPO in picotool debugprobe
 do
     DEST="$OUTDIR/$REPO"
     REPO_URL="${GITHUB_PREFIX}${REPO}${GITHUB_SUFFIX}"
-    git clone $REPO_URL
+    if [[ "$REPO" == "picotool" ]]; then
+      git clone -b $SDK_BRANCH $REPO_URL
+    else
+      git clone $REPO_URL
+    fi
 
     # Build both
     cd $DEST
