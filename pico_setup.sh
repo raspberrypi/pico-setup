@@ -19,7 +19,7 @@ OUTDIR="$(pwd)/pico"
 # Install dependencies
 GIT_DEPS="git git-lfs"
 SDK_DEPS="cmake gcc-arm-none-eabi gcc g++"
-OPENOCD_DEPS="gdb-multiarch automake autoconf build-essential texinfo libtool libftdi-dev libusb-1.0-0-dev libjim-dev pkg-config"
+OPENOCD_DEPS="gdb-multiarch automake autoconf build-essential texinfo libtool libftdi-dev libusb-1.0-0-dev libjim-dev pkg-config libgpiod-dev"
 VSCODE_DEPS="code"
 UART_DEPS="minicom"
 
@@ -134,7 +134,7 @@ else
     # Build OpenOCD
     echo "Building OpenOCD"
     cd $OUTDIR
-    OPENOCD_CONFIGURE_ARGS="--enable-ftdi --enable-sysfsgpio --enable-bcm2835gpio --disable-werror"
+    OPENOCD_CONFIGURE_ARGS="--enable-ftdi --enable-sysfsgpio --enable-bcm2835gpio --disable-werror --enable-linuxgpiod"
 
     git clone "${GITHUB_PREFIX}openocd${GITHUB_SUFFIX}" --depth=1
     cd openocd
