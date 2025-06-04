@@ -18,7 +18,7 @@ OUTDIR="$(pwd)/pico"
 
 # Install dependencies
 GIT_DEPS="git git-lfs"
-SDK_DEPS="cmake gcc-arm-none-eabi gcc g++"
+SDK_DEPS="cmake gcc-arm-none-eabi gcc g++ ninja-build"
 OPENOCD_DEPS="gdb-multiarch automake autoconf build-essential texinfo libtool libftdi-dev libusb-1.0-0-dev libjim-dev pkg-config libgpiod-dev"
 VSCODE_DEPS="code"
 UART_DEPS="minicom"
@@ -102,23 +102,15 @@ do
     cd $OUTDIR
 done
 
-# Build blink and hello world for pico and pico2
+# Build blink and hello world for default boards
 cd pico-examples
-for board in pico pico2
+for board in pico pico_w pico2 pico2_w
 do
     build_dir=build_$board
-    mkdir $build_dir
-    cd $build_dir
-    cmake ../ -DPICO_BOARD=$board -DCMAKE_BUILD_TYPE=Debug
-    for e in blink hello_world
-    do
-        echo "Building $e for $board"
-        cd $e
-        make -j$JNUM
-        cd ..
-    done
-
-    cd ..
+    cmake -S . -B $build_dir -GNinja -DPICO_BOARD=$board -DCMAKE_BUILD_TYPE=Debug
+    examples="blink hello_world"
+    echo "Building $examples for $board"
+    cmake --build $build_dir --target $examples
 done
 
 cd $OUTDIR
