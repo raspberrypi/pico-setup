@@ -31,7 +31,7 @@ To build the blink example,  run the following command:
 ```bash
 cmake --build build_pico --target blink
 ```
-This build the specified target `blink` in the build folder `build_pico`
+This builds the specified target `blink` in the build folder `build_pico`
 
 Then to run it, attach a Pico-series microcontroller in BOOTSEL mode, and run:
 ```bash
@@ -78,6 +78,35 @@ monitor reset init
 load
 continue
 ```
+
+To exit GDB, use Ctrl+D twice. This will leave your Pico-series microcontroller in the halted state, so you will need to unplug and replug it to get it running again. To leave the device running, you can use:
+```console
+monitor reset run
+```
+before exiting to leave the Pico running the code.
+
+### Useful GDB Commands
+To configure the GDB layout, the following commands can be useful:
+* `layout src` - displays the source code
+* `layout split` - displays the source code and the assembly instructions
+* `layout regs` - displays the current register contents
+
+To step through code, you can use:
+* `step` or `s` - step to the next line of code, and into any functions
+* `next` or `n` - step to the next line of code, without stepping into functions
+* `finish` or `fin` - step out of the current function
+
+To step through assembly instructions, you can use:
+* `stepi` or `si` - step to the next assembly instruction, and into any functions
+* `nexti` or `ni` - step to the next assembly instruction, without stepping into functions
+
+While stepping, you can just press enter again to repeat the previous command
+
+To set breakpoints, use the `break` or `b` command plus the location of the breakpoint. The location can be:
+* A function name - `break main`
+* A line of code - `break 12`
+* Either of those in a specific file - `break blink.c:48`, `break blink.c:main`
+* A specific memory address - `break *0x10000ff2`
 
 For more details on debugging with GDB, see the [GDB docs](https://sourceware.org/gdb/current/onlinedocs/gdb.html/)
 
