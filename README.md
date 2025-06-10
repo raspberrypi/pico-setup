@@ -1,6 +1,6 @@
-# Pico Command Line Setup
+# Pico-series microcontroller Command Line Setup
 
-This script gives you an easy way to setup your Raspberry Pi to be able to build and run programs on your Pico from the command line. Compatibility with any systems not running Raspberry Pi OS or Raspberry Pi OS Lite is not guaranteed or maintained.
+This script gives you an easy way to setup your Raspberry Pi to be able to build and run programs on your Pico-series microcontroller from the command line. Compatibility with any systems not running Raspberry Pi OS or Raspberry Pi OS Lite is not guaranteed or maintained.
 
 To download & run this script, you can use the following commands:
 ```bash
@@ -11,7 +11,7 @@ chmod +x pico_setup.sh
 
 For manual command line setup instructions for other operating systems, see [Basic Setup on Other Operating Systems](#basic-setup-on-other-operating-systems)
 
-If you want to use a GUI instead of the command line, then see the [pico-vscode](https://github.com/raspberrypi/pico-vscode) extension instead of this script - this supports 64-bit Windows, MacOS, Raspberry Pi OS, and most common Linux distros.
+If you want to use a GUI instead of the command line, then see the [pico-vscode](https://github.com/raspberrypi/pico-vscode) extension instead of this script - this supports 64-bit Windows, MacOS, Raspberry Pi OS, and most common Linux distros. This is documented in the [Getting Started Guide](https://datasheets.raspberrypi.com/pico/getting-started-with-pico.pdf).
 
 ## Compiling and running an example
 
@@ -22,26 +22,33 @@ cd pico/pico-examples
 
 Depending on the board you're using (eg pico2), replace `build_pico` with the relevant build directory (eg `build_pico2`) in the following commands.
 
-> If you're not using one of the default boards (pico, pico_w, pico2, or pico2_w), you'll need to create a new build directory for your board - you can do this with:
+> If you're not using one of the default boards (pico, pico_w, pico2, or pico2_w), you'll need to create a new build directory for your board - you can do this with this command (replace `$board` with the board you are using):
 > ```
 > cmake -S . -B build_$board -GNinja -DPICO_BOARD=$board -DCMAKE_BUILD_TYPE=Debug
 > ```
 
-To build & run the blink example, first attach a Pico in bootsel mode, and run the following commands:
+To build the blink example,  run the following command:
 ```bash
 cmake --build build_pico --target blink
-picotool load build_pico/blink/blink.uf2 -x
 ```
-You should now have a blinking Pico! For more info on the `picotool` command which is used to load and query binaries on the device, see its [README](https://github.com/raspberrypi/picotool?tab=readme-ov-file#readme)
+This build the specified target `blink` in the build folder `build_pico`
 
-## Input/Output
+Then to run it, attach a Pico-series microcontroller in BOOTSEL mode, and run:
+```bash
+picotool load build_pico/blink/blink.uf2 -vx
+```
+This loads the file into Flash on the board, then verifies it was loaded correctly and reboots the board to execute it
 
-To view console output, you can either connect the UART output to a [Debug Probe](https://www.raspberrypi.com/documentation/microcontrollers/debug-probe.html#getting-started) (or similar) and use stdio_uart (see the hello_serial example), or you can use stdio_usb (see the hello_usb example).
+You should now have a blinking LED on your board! For more info on the `picotool` command which is used to load and query binaries on the device, see its [README](https://github.com/raspberrypi/picotool?tab=readme-ov-file#readme)
 
-First, build & run the example for your stdio choice on your Pico with:
+## Console Input/Output
+
+To view console output, you can either connect the UART output to a [Debug Probe](https://www.raspberrypi.com/documentation/microcontrollers/debug-probe.html#getting-started) (or similar) and use `stdio_uart` (see the hello_serial example), or you can use `stdio_usb` (see the hello_usb example).
+
+First, build & run the example for your `stdio` choice on your Pico-series microcontroller with the same commands as before:
 ```bash
 cmake --build build_pico --target hello_serial
-picotool load build_pico/hello_world/serial/hello_serial.uf2 -x
+picotool load build_pico/hello_world/serial/hello_serial.uf2 -vx
 ```
 
 Then attach `minicom` to view the output:
@@ -54,7 +61,7 @@ To exit minicom, type Ctrl+A then X
 
 ## Debugging with OpenOCD and GDB
 
-To debug programs on the Pico, you first need to attach a debugger such as the [Debug Probe](https://www.raspberrypi.com/documentation/microcontrollers/debug-probe.html#getting-started). Once that's done, you can attach OpenOCD to your Pico with:
+To debug programs on the Pico-series microcontroller, you first need to attach a debugger such as the [Debug Probe](https://www.raspberrypi.com/documentation/microcontrollers/debug-probe.html#getting-started). Once that's done, you can attach OpenOCD to your Pico-series microcontroller with:
 ```bash
 openocd -f interface/cmsis-dap.cfg -f target/rp2040.cfg -c "adapter speed 5000"
 ```
@@ -117,7 +124,7 @@ Then follow the [manual setup instructions](#setup-sdk--picotool).
 
 If you have `apt`, then running the [pico_setup.sh](./pico_setup.sh) script should hopefully work for you, and you won't need to do any manual setup.
 
-If it doesn't work, or you don't have `apt`, then you can manually install the `GIT_DEPS` and `SDK_DEPS` from the script. Then follow the [manual setup instructions](#setup-sdk--picotool).
+If it doesn't work, or you don't have `apt`, then you can manually install the `GIT_DEPS` (`git` & `git-lfs`) and `SDK_DEPS` (`cmake`, `gcc-arm-none-eabi`, `gcc`, `g++` & `ninja-build`) from the script. You may also need to install a cross-compiled `newlib` if it isn't included in `gcc-arm-none-eabi`, such as `libnewlib-arm-none-eabi` & `libstdc++-arm-none-eabi-newlib`. Once those are installed, follow the [manual setup instructions](#setup-sdk--picotool).
 
 ### Setup SDK & Picotool
 
@@ -175,8 +182,8 @@ cmake -S . -B build_$board =GNinja -DPICO_BOARD=$board -DCMAKE_BUILD_TYPE=Debug
 cmake --build build
 ```
 
-Put your board in bootsel mode and use `picotool` to load the blink example:
+Put your board in BOOTSEL mode and use `picotool` to load the blink example:
 ```bash
-picotool load build/blink/blink.uf2 -x
+picotool load build/blink/blink.uf2 -vx
 ```
-You should now have a blinking board
+You should now have a blinking LED on your board
