@@ -108,7 +108,7 @@ for board in pico pico_w pico2 pico2_w
 do
     build_dir=build_$board
     cmake -S . -B $build_dir -GNinja -DPICO_BOARD=$board -DCMAKE_BUILD_TYPE=Debug
-    examples="blink hello_world"
+    examples="blink hello_serial hello_usb"
     echo "Building $examples for $board"
     cmake --build $build_dir --target $examples
 done
