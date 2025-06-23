@@ -61,7 +61,7 @@ To exit minicom, type Ctrl+A then X
 
 ## Debugging with OpenOCD and GDB
 
-To debug programs on the Pico-series microcontroller, you first need to attach a debugger such as the [Debug Probe](https://www.raspberrypi.com/documentation/microcontrollers/debug-probe.html#getting-started). Once that's done, you can attach OpenOCD to your Pico-series microcontroller with this command (replace `rp2040.cfg` with `rp2040.cfg` or `rp2350.cfg`, depending on which chip is on your board):
+To debug programs on the Pico-series microcontroller, you first need to attach a debugger such as the [Debug Probe](https://www.raspberrypi.com/documentation/microcontrollers/debug-probe.html#getting-started). Once that's done, you can attach OpenOCD to your Pico-series microcontroller with this command (replace `rp2040.cfg` with `rp2350.cfg`, if using an RP2350-bashed board like a Pico 2):
 ```bash
 openocd -f interface/cmsis-dap.cfg -f target/rp2040.cfg -c "adapter speed 5000"
 ```
