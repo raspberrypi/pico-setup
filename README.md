@@ -22,7 +22,7 @@ cd pico/pico-examples
 
 Depending on the board you're using (eg pico2), replace `build_pico` with the relevant build directory (eg `build_pico2`) in the following commands.
 
-> If you're not using one of the default boards (pico, pico_w, pico2, or pico2_w), you'll need to create a new build directory for your board - you can do this with this command (replace `$board` with the board you are using):
+> If you're not using one of the default boards (pico, pico_w, pico2, or pico2_w), you'll need to create a new build directory for your board - you can do this with this command (replace both instances of `$board` with the board you are using):
 > ```
 > cmake -S . -B build_$board -GNinja -DPICO_BOARD=$board -DCMAKE_BUILD_TYPE=Debug
 > ```
@@ -61,7 +61,7 @@ To exit minicom, type Ctrl+A then X
 
 ## Debugging with OpenOCD and GDB
 
-To debug programs on the Pico-series microcontroller, you first need to attach a debugger such as the [Debug Probe](https://www.raspberrypi.com/documentation/microcontrollers/debug-probe.html#getting-started). Once that's done, you can attach OpenOCD to your Pico-series microcontroller with:
+To debug programs on the Pico-series microcontroller, you first need to attach a debugger such as the [Debug Probe](https://www.raspberrypi.com/documentation/microcontrollers/debug-probe.html#getting-started). Once that's done, you can attach OpenOCD to your Pico-series microcontroller with this command (replace `rp2040.cfg` with `rp2040.cfg` or `rp2350.cfg`, depending on which chip is on your board):
 ```bash
 openocd -f interface/cmsis-dap.cfg -f target/rp2040.cfg -c "adapter speed 5000"
 ```
@@ -71,9 +71,9 @@ In a separate window, you can run GDB and connect to that OpenOCD server:
 gdb -ex "target extended-remote localhost:3333"
 ```
 
-Then in GDB, run the following (replacing blink.elf with the path to blink.elf if it's not in the current directory)
+Then in GDB, run the following:
 ```console
-file blink.elf
+file build_pico/blink/blink.elf
 monitor reset init
 load
 continue
@@ -121,6 +121,8 @@ Alternatively you can use something like `screen` or `tmux` to allow you to open
 * Ctrl+A then D - detach from the current terminal
 * `screen -r minicom` - re-attach to an existing terminal called `minicom`
 * `screen -ls` - list existing terminals
+
+For more details on `screen`, see the [screen docs](https://www.gnu.org/software/screen/manual/screen.html)
 
 ## Basic Setup on Other Operating Systems
 
