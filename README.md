@@ -112,7 +112,7 @@ For more details on debugging with GDB, see the [GDB docs](https://sourceware.or
 
 ## Multiple Terminals
 
-When debugging or viewing serial output, you might want multiple programs open different terminals, as they all need to run at the same time.
+When debugging or viewing serial output, you might want multiple programs open in different terminals, as they all need to run at the same time.
 
 On Raspberry Pi OS Lite, you can switch between different terminals with Alt+F1,F2,F3,F4 etc.
 
@@ -207,7 +207,7 @@ cd pico-examples
 
 Build them, replacing `$board` with the pico board you are using
 ```bash
-cmake -S . -B build_$board =GNinja -DPICO_BOARD=$board -DCMAKE_BUILD_TYPE=Debug
+cmake -S . -B build_$board -GNinja -DPICO_BOARD=$board -DCMAKE_BUILD_TYPE=Debug
 cmake --build build
 ```
 
