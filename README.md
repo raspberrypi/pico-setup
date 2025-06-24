@@ -43,7 +43,7 @@ You should now have a blinking LED on your board! For more info on the `picotool
 
 ## Console Input/Output
 
-To view console output, you can either connect the UART output to a [Debug Probe](https://www.raspberrypi.com/documentation/microcontrollers/debug-probe.html#getting-started) (or similar) and use `stdio_uart` (see the hello_serial example), or you can use `stdio_usb` (see the hello_usb example).
+To view console output, you can either connect the UART output to a [Debug Probe](https://www.raspberrypi.com/documentation/microcontrollers/debug-probe.html#getting-started) (or similar) and use `stdio_uart` (see the [hello_serial example](https://github.com/raspberrypi/pico-examples/blob/master/hello_world/serial)), or you can use `stdio_usb` (see the [hello_usb example](https://github.com/raspberrypi/pico-examples/blob/master/hello_world/usb)).
 
 First, build & run the example for your `stdio` choice on your Pico-series microcontroller with the same commands as before:
 ```bash
@@ -186,7 +186,7 @@ git clone https://github.com/raspberrypi/picotool.git
 Then install libusb
 * On Windows, download and extract libUSB from here https://libusb.info/ (hover over Downloads, and click Latest Windows Binaries), and set LIBUSB_ROOT environment variable to the extracted directory.
 * On MacOS `brew install libusb`
-* On Linux `apt install libusb-1.0-0-dev`
+* On Linux `sudo apt install libusb-1.0-0-dev`
 
 Then build and install picotool using these commands
 ```bash
