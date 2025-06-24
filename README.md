@@ -207,7 +207,7 @@ git clone https://github.com/raspberrypi/pico-examples.git
 cd pico-examples
 ```
 
-Build them all, replacing `$board` with the pico board you are using
+Build them all, replacing all occurences of `$board` with the pico board you are using
 ```bash
 cmake -S . -B build_$board -GNinja -DPICO_BOARD=$board -DCMAKE_BUILD_TYPE=Debug
 cmake --build build_$board
