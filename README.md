@@ -31,7 +31,7 @@ To build the blink example, run the following command:
 ```bash
 cmake --build build_pico --target blink
 ```
-This builds the specified target `blink` in the build folder `build_pico` - it will probably have `no work to do` because `blink` was built earlier by `pico_setup.sh`
+This builds the specified target `blink` in the build folder `build_pico` - it will probably display `no work to do` because `blink` was built earlier by `pico_setup.sh`
 
 Then to run it, attach a Pico-series microcontroller in BOOTSEL mode, and run:
 ```bash
