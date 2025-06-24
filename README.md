@@ -27,11 +27,11 @@ Depending on the board you're using (eg pico2), replace `build_pico` with the re
 > cmake -S . -B build_$board -GNinja -DPICO_BOARD=$board -DCMAKE_BUILD_TYPE=Debug
 > ```
 
-To build the blink example,  run the following command:
+To build the blink example, run the following command:
 ```bash
 cmake --build build_pico --target blink
 ```
-This builds the specified target `blink` in the build folder `build_pico`
+This builds the specified target `blink` in the build folder `build_pico` - it will probably have `no work to do` because `blink` was built earlier by `pico_setup.sh`
 
 Then to run it, attach a Pico-series microcontroller in BOOTSEL mode, and run:
 ```bash
@@ -61,7 +61,7 @@ To exit minicom, type Ctrl+A then X
 
 ## Debugging with OpenOCD and GDB
 
-To debug programs on the Pico-series microcontroller, you first need to attach a debugger such as the [Debug Probe](https://www.raspberrypi.com/documentation/microcontrollers/debug-probe.html#getting-started). Once that's done, you can attach OpenOCD to your Pico-series microcontroller with this command (replace `rp2040.cfg` with `rp2350.cfg`, if using an RP2350-bashed board like a Pico 2):
+To debug programs on the Pico-series microcontroller, you first need to attach a debugger such as the [Debug Probe](https://www.raspberrypi.com/documentation/microcontrollers/debug-probe.html#getting-started). Once that's done, you can attach OpenOCD to your Pico-series microcontroller with this command (replace `rp2040.cfg` with `rp2350.cfg`, if using an RP2350-based board like a Pico 2):
 ```bash
 openocd -f interface/cmsis-dap.cfg -f target/rp2040.cfg -c "adapter speed 5000"
 ```
@@ -207,14 +207,14 @@ git clone https://github.com/raspberrypi/pico-examples.git
 cd pico-examples
 ```
 
-Build them, replacing `$board` with the pico board you are using
+Build them all, replacing `$board` with the pico board you are using
 ```bash
 cmake -S . -B build_$board -GNinja -DPICO_BOARD=$board -DCMAKE_BUILD_TYPE=Debug
-cmake --build build
+cmake --build build_$board
 ```
 
 Put your board in BOOTSEL mode and use `picotool` to load the blink example:
 ```bash
-picotool load build/blink/blink.uf2 -vx
+picotool load build_$board/blink/blink.uf2 -vx
 ```
 You should now have a blinking LED on your board
