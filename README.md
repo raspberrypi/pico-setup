@@ -188,7 +188,7 @@ Then install libusb
 * On MacOS `brew install libusb`
 * On Linux `sudo apt install libusb-1.0-0-dev`
 
-Then build and install picotool using these commands
+Then build and install picotool using these commands:
 ```bash
 cd picotool
 cmake -S . -B build
@@ -207,7 +207,7 @@ git clone https://github.com/raspberrypi/pico-examples.git
 cd pico-examples
 ```
 
-Build them all, replacing all occurences of `$board` with the pico board you are using
+Build them all, replacing all occurences of `$board` with the pico board you are using:
 ```bash
 cmake -S . -B build_$board -GNinja -DPICO_BOARD=$board -DCMAKE_BUILD_TYPE=Debug
 cmake --build build_$board
@@ -217,4 +217,4 @@ Put your board in BOOTSEL mode and use `picotool` to load the blink example:
 ```bash
 picotool load build_$board/blink/blink.uf2 -vx
 ```
-You should now have a blinking LED on your board
+You should now have a blinking LED on your board.
