@@ -142,7 +142,7 @@ Then follow the [manual setup instructions](#setup-sdk--picotool). You will need
 
 #### MacOS
 
-Install [Homebrew](https://brew.sh/) and run these commands
+Install [Homebrew](https://brew.sh/) and run these commands:
 ```
 xcode-select --install
 brew install cmake ninja
@@ -201,7 +201,7 @@ To use picotool without sudo on Linux, you'll also need to install the picotool 
 For more details on building & installing picotool, see its [README](https://github.com/raspberrypi/picotool?tab=readme-ov-file#readme)
 
 ### Test it's working with pico-examples
-Clone pico-examples
+Clone pico-examples:
 ```bash
 git clone https://github.com/raspberrypi/pico-examples.git
 cd pico-examples
