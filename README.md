@@ -212,6 +212,8 @@ Build them all, replacing all occurences of `$board` with the pico board you are
 cmake -S . -B build_$board -GNinja -DPICO_BOARD=$board -DCMAKE_BUILD_TYPE=Debug
 cmake --build build_$board
 ```
+> The cmake `-S` flag indicates the source directory, and the `-B` flag tells cmake the
+> name of the output-directory to create, which is then supplied to the `--build` flag
 
 Put your board in BOOTSEL mode and use `picotool` to load the blink example:
 ```bash
