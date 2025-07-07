@@ -89,14 +89,12 @@ do
     # Build both
     cd $DEST
     git submodule update --init
-    mkdir build
-    cd build
-    cmake ../
-    make -j$JNUM
+    cmake -S . -B build -GNinja
+    cmake --build build
 
     if [[ "$REPO" == "picotool" ]]; then
         echo "Installing picotool"
-        sudo make install
+        sudo cmake --install build
     fi
 
     cd $OUTDIR
