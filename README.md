@@ -27,11 +27,11 @@ Depending on the board you're using (eg pico2), replace `build_pico` with the re
 > cmake -S . -B build_$board -GNinja -DPICO_BOARD=$board -DCMAKE_BUILD_TYPE=Debug
 > ```
 
-To build the blink example,  run the following command:
+To build the blink example, run the following command:
 ```bash
 cmake --build build_pico --target blink
 ```
-This builds the specified target `blink` in the build folder `build_pico`
+This builds the specified target `blink` in the build folder `build_pico` - it will probably display `no work to do` because `blink` was built earlier by `pico_setup.sh`
 
 Then to run it, attach a Pico-series microcontroller in BOOTSEL mode, and run:
 ```bash
@@ -43,7 +43,7 @@ You should now have a blinking LED on your board! For more info on the `picotool
 
 ## Console Input/Output
 
-To view console output, you can either connect the UART output to a [Debug Probe](https://www.raspberrypi.com/documentation/microcontrollers/debug-probe.html#getting-started) (or similar) and use `stdio_uart` (see the hello_serial example), or you can use `stdio_usb` (see the hello_usb example).
+To view console output, you can either connect the UART output to a [Debug Probe](https://www.raspberrypi.com/documentation/microcontrollers/debug-probe.html#getting-started) (or similar) and use `stdio_uart` (see the [hello_serial example](https://github.com/raspberrypi/pico-examples/blob/master/hello_world/serial)), or you can use `stdio_usb` (see the [hello_usb example](https://github.com/raspberrypi/pico-examples/blob/master/hello_world/usb)).
 
 First, build & run the example for your `stdio` choice on your Pico-series microcontroller with the same commands as before:
 ```bash
@@ -61,7 +61,7 @@ To exit minicom, type Ctrl+A then X
 
 ## Debugging with OpenOCD and GDB
 
-To debug programs on the Pico-series microcontroller, you first need to attach a debugger such as the [Debug Probe](https://www.raspberrypi.com/documentation/microcontrollers/debug-probe.html#getting-started). Once that's done, you can attach OpenOCD to your Pico-series microcontroller with this command (replace `rp2040.cfg` with `rp2350.cfg`, if using an RP2350-bashed board like a Pico 2):
+To debug programs on the Pico-series microcontroller, you first need to attach a debugger such as the [Debug Probe](https://www.raspberrypi.com/documentation/microcontrollers/debug-probe.html#getting-started). Once that's done, you can attach OpenOCD to your Pico-series microcontroller with this command (replace `rp2040.cfg` with `rp2350.cfg`, if using an RP2350-based board like a Pico 2):
 ```bash
 openocd -f interface/cmsis-dap.cfg -f target/rp2040.cfg -c "adapter speed 5000"
 ```
@@ -142,7 +142,7 @@ Then follow the [manual setup instructions](#setup-sdk--picotool). You will need
 
 #### MacOS
 
-Install [Homebrew](https://brew.sh/) and run these commands
+Install [Homebrew](https://brew.sh/) and run these commands:
 ```
 xcode-select --install
 brew install cmake ninja
@@ -186,9 +186,9 @@ git clone https://github.com/raspberrypi/picotool.git
 Then install libusb
 * On Windows, download and extract libUSB from here https://libusb.info/ (hover over Downloads, and click Latest Windows Binaries), and set LIBUSB_ROOT environment variable to the extracted directory.
 * On MacOS `brew install libusb`
-* On Linux `apt install libusb-1.0-0-dev`
+* On Linux `sudo apt install libusb-1.0-0-dev`
 
-Then build and install picotool using these commands
+Then build and install picotool using these commands:
 ```bash
 cd picotool
 cmake -S . -B build
@@ -201,20 +201,22 @@ To use picotool without sudo on Linux, you'll also need to install the picotool 
 For more details on building & installing picotool, see its [README](https://github.com/raspberrypi/picotool?tab=readme-ov-file#readme)
 
 ### Test it's working with pico-examples
-Clone pico-examples
+Clone pico-examples:
 ```bash
 git clone https://github.com/raspberrypi/pico-examples.git
 cd pico-examples
 ```
 
-Build them, replacing `$board` with the pico board you are using
+Build them all, replacing all occurences of `$board` with the pico board you are using:
 ```bash
 cmake -S . -B build_$board -GNinja -DPICO_BOARD=$board -DCMAKE_BUILD_TYPE=Debug
-cmake --build build
+cmake --build build_$board
 ```
+> The cmake `-S` flag indicates the source directory, and the `-B` flag tells cmake the
+> name of the output-directory to create, which is then supplied to the `--build` flag
 
 Put your board in BOOTSEL mode and use `picotool` to load the blink example:
 ```bash
-picotool load build/blink/blink.uf2 -vx
+picotool load build_$board/blink/blink.uf2 -vx
 ```
-You should now have a blinking LED on your board
+You should now have a blinking LED on your board.
