@@ -20,6 +20,7 @@ OUTDIR="$(pwd)/pico"
 GIT_DEPS="git"
 SDK_DEPS="cmake gcc-arm-none-eabi gcc g++ ninja-build"
 OPENOCD_DEPS="gdb-multiarch automake autoconf build-essential texinfo libtool libftdi-dev libusb-1.0-0-dev libjim-dev pkg-config libgpiod-dev"
+OPENOCD_TAG="sdk-2.2.0"
 UART_DEPS="minicom"
 
 # Build full list of dependencies
@@ -125,7 +126,7 @@ else
     cd $OUTDIR
     OPENOCD_CONFIGURE_ARGS="--enable-ftdi --enable-sysfsgpio --enable-bcm2835gpio --disable-werror --enable-linuxgpiod"
 
-    git clone "${GITHUB_PREFIX}openocd${GITHUB_SUFFIX}" --depth=1
+    git clone "${GITHUB_PREFIX}openocd${GITHUB_SUFFIX}" -b ${OPENOCD_TAG} --depth=1
     cd openocd
     ./bootstrap
     ./configure $OPENOCD_CONFIGURE_ARGS
