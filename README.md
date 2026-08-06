@@ -193,7 +193,7 @@ Then build and install picotool using these commands:
 cd picotool
 cmake -S . -B build
 cmake --build build
-sudo cmake --install .
+sudo cmake --install build
 ```
 
 To use picotool without sudo on Linux, you'll also need to install the picotool udev rules from the picotool/udev folder.
