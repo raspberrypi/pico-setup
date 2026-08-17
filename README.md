@@ -132,8 +132,8 @@ For more details on `screen`, see the [screen docs](https://www.gnu.org/software
 If you're on Windows, it is **strongly recommended** to use [WSL2](https://learn.microsoft.com/en-us/windows/wsl/install) and then follow the [Linux instructions](#linux) inside that. You should also install [usbipd](https://github.com/dorssel/usbipd-win) to access USB devices inside WSL2 (see the docs there for instructions).
 
 If you're not using WSL2, then you'll need to install the following tools:
-* [Arm GNU Toolchain](https://developer.arm.com/downloads/-/arm-gnu-toolchain-downloads)
-    * Pick Windows -> AArch32 bare-metal target (arm-none-eabi) -> the .exe file
+* [Arm GNU Toolchain](https://gitlab.arm.com/tooling/gnu-toolchains-for-arm)
+    * Select a release -> pick Windows (mingw-w64-x86_64) -> download the arm-none-eabi.exe or arm-none-eabi.msi file
 * [CMake](https://cmake.org/download/)
 * [Microsoft Visual Studio](https://visualstudio.microsoft.com/downloads/)
     * When running the installer, select Desktop Development with C++
