@@ -133,7 +133,7 @@ If you're on Windows, it is **strongly recommended** to use [WSL2](https://learn
 
 If you're not using WSL2, then you'll need to install the following tools:
 * [Arm GNU Toolchain](https://gitlab.arm.com/tooling/gnu-toolchains-for-arm)
-    * Select a release -> Pick Windows (mingw-w64-x86_64) -> Pick arm-none-eabi -> the .exe or .msi file
+    * Select a release -> pick Windows (mingw-w64-x86_64) -> download the arm-none-eabi.exe or arm-none-eabi.msi file
 * [CMake](https://cmake.org/download/)
 * [Microsoft Visual Studio](https://visualstudio.microsoft.com/downloads/)
     * When running the installer, select Desktop Development with C++
