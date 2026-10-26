@@ -155,7 +155,7 @@ Then follow the [manual setup instructions](#setup-sdk--picotool).
 
 If you have `apt`, then running the [pico_setup.sh](./pico_setup.sh) script should hopefully work for you, and you won't need to do any manual setup.
 
-If it doesn't work, or you don't have `apt`, then you can manually install the `GIT_DEPS` (`git` & `git-lfs`) and `SDK_DEPS` (`cmake`, `gcc-arm-none-eabi`, `gcc`, `g++` & `ninja-build`) from the script. You may also need to install a cross-compiled `newlib` if it isn't included in `gcc-arm-none-eabi`, such as `libnewlib-arm-none-eabi` & `libstdc++-arm-none-eabi-newlib`. Once those are installed, follow the [manual setup instructions](#setup-sdk--picotool).
+If it doesn't work, or you don't have `apt`, then you can manually install the `GIT_DEPS` (`git`) and `SDK_DEPS` (`cmake`, `gcc-arm-none-eabi`, `gcc`, `g++` & `ninja-build`) from the script. You may also need to install a cross-compiled `newlib` if it isn't included in `gcc-arm-none-eabi`, such as `libnewlib-arm-none-eabi` & `libstdc++-arm-none-eabi-newlib`. Once those are installed, follow the [manual setup instructions](#setup-sdk--picotool).
 
 ### Setup SDK & Picotool
 
