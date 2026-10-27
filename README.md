@@ -11,7 +11,7 @@ chmod +x pico_setup.sh
 
 For manual command line setup instructions for other operating systems, see [Basic Setup on Other Operating Systems](#basic-setup-on-other-operating-systems)
 
-If you want to use a GUI instead of the command line, then see the [pico-vscode](https://github.com/raspberrypi/pico-vscode) extension instead of this script - this supports 64-bit Windows, MacOS, Raspberry Pi OS, and most common Linux distros. This is documented in the [Getting Started Guide](https://datasheets.raspberrypi.com/pico/getting-started-with-pico.pdf).
+If you want to use a GUI instead of the command line, then see the [pico-vscode](https://github.com/raspberrypi/pico-vscode) extension instead of this script - this supports 64-bit Windows, MacOS, Raspberry Pi OS, and most common Linux distros. This is documented in the [Getting Started Guide](https://pip.raspberrypi.com/documents/RP-008276-DS).
 
 ## Compiling and running an example
 
@@ -20,7 +20,7 @@ After running the setup script, you'll want to run an example to check everythin
 cd pico/pico-examples
 ```
 
-Depending on the board you're using (eg pico2), replace `build_pico` with the relevant build directory (eg `build_pico2`) in the following commands.
+Depending on the board you're using (e.g. pico2), replace `build_pico` with the relevant build directory (e.g. `build_pico2`) in the following commands.
 
 > If you're not using one of the default boards (pico, pico_w, pico2, or pico2_w), you'll need to create a new build directory for your board - you can do this with this command (replace both instances of `$board` with the board you are using):
 > ```
@@ -55,7 +55,7 @@ Then attach `minicom` to view the output:
 ```bash
 minicom -b 115200 -D /dev/ttyACM0
 ```
-The port number may be different, so also try `/dev/ttyACM1` etc - and on other OSes may be entirely different (eg `/dev/tty.usbmodem0001` on MacOS)
+The port number may be different, so also try `/dev/ttyACM1` etc - and on other OSes may be entirely different (e.g. `/dev/tty.usbmodem0001` on MacOS)
 
 To exit minicom, type Ctrl+A then X
 
@@ -138,7 +138,7 @@ If you're not using WSL2, then you'll need to install the following tools:
 * [Microsoft Visual Studio](https://visualstudio.microsoft.com/downloads/)
     * When running the installer, select Desktop Development with C++
 
-Then follow the [manual setup instructions](#setup-sdk--picotool). You will need to run all commands from the "Developer PowerShell for VS ..." terminal, not your usual terminal. For the first cmake configuration in each project (eg `cmake ..`), you will need to replace `-GNinja` with `-G "NMake Makefiles"`, and anything with `sudo` needs to be run as administrator. Also, you should use as short a path as possible due to path length limits on Windows.
+Then follow the [manual setup instructions](#setup-sdk--picotool). You will need to run all commands from the "Developer PowerShell for VS ..." terminal, not your usual terminal. For the first cmake configuration in each project (e.g. `cmake ..`), you will need to replace `-GNinja` with `-G "NMake Makefiles"`, and anything with `sudo` needs to be run as administrator. Also, you should use as short a path as possible due to path length limits on Windows.
 
 #### MacOS
 
