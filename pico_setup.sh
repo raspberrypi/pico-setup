@@ -3,6 +3,9 @@
 # Exit on error
 set -e
 
+# "shallow" clone by default, change to "full" for full git clones
+GIT_CLONE_TYPE="shallow"
+
 if grep -q Raspberry /proc/cpuinfo; then
     echo "Running on a Raspberry Pi"
 else
@@ -46,6 +49,12 @@ GITHUB_PREFIX="https://github.com/raspberrypi/"
 GITHUB_SUFFIX=".git"
 SDK_BRANCH="master"
 
+if [ "$GIT_CLONE_TYPE" == "shallow" ]; then
+    GIT_OPTIONS="--depth 1"
+else
+    GIT_OPTIONS=""
+fi
+
 for REPO in sdk examples extras playground
 do
     DEST="$OUTDIR/pico-$REPO"
@@ -55,11 +64,11 @@ do
     else
         REPO_URL="${GITHUB_PREFIX}pico-${REPO}${GITHUB_SUFFIX}"
         echo "Cloning $REPO_URL"
-        git clone -b $SDK_BRANCH $REPO_URL
+        git clone -b $SDK_BRANCH $GIT_OPTIONS $REPO_URL
 
         # Any submodules
         cd $DEST
-        git submodule update --init
+        git submodule update --init $GIT_OPTIONS
         cd $OUTDIR
 
         # Define PICO_SDK_PATH in ~/.bashrc
@@ -81,14 +90,14 @@ do
     DEST="$OUTDIR/$REPO"
     REPO_URL="${GITHUB_PREFIX}${REPO}${GITHUB_SUFFIX}"
     if [[ "$REPO" == "picotool" ]]; then
-      git clone -b $SDK_BRANCH $REPO_URL
+      git clone -b $SDK_BRANCH $GIT_OPTIONS $REPO_URL
     else
-      git clone $REPO_URL
+      git clone $REPO_URL $GIT_OPTIONS
     fi
 
     # Build both
     cd $DEST
-    git submodule update --init
+    git submodule update --init $GIT_OPTIONS
     cmake -S . -B build -GNinja
     cmake --build build
 
